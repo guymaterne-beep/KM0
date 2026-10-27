@@ -1,0 +1,6 @@
+{
+  "name": "Projet KM0 Belgique | Club Cycliste & Aventures",
+  "description": "L'antenne belge de Projet KM0 : club cycliste 4 saisons (VTT l'hiver, Gravel et Route le reste de l'année), voyages d'exception, stages techniques et sorties guidées.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
