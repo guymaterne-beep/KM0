@@ -1,4 +1,5 @@
-import { MEMBERSHIP_TIERS, MembershipTier } from '../data/club';
+import { useApp } from '../context/AppContext';
+import { MembershipTier } from '../data/club';
 import { Check, Bike } from 'lucide-react';
 
 interface ClubMembershipProps {
@@ -6,6 +7,11 @@ interface ClubMembershipProps {
 }
 
 export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
+  const { membershipTiers } = useApp();
+
+  // Filter only active tiers on public website
+  const activeTiers = membershipTiers.filter((t) => t.active !== false);
+
   return (
     <section id="adhesion" className="py-20 bg-stone-100/60 border-t border-stone-200 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,7 +31,7 @@ export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
 
         {/* Tiers Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch">
-          {MEMBERSHIP_TIERS.map((tier) => (
+          {activeTiers.map((tier) => (
             <div
               key={tier.id}
               className={`p-8 rounded-2xl flex flex-col justify-between transition-all duration-300 relative ${
@@ -36,7 +42,7 @@ export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
             >
               {tier.recommended && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-400 text-stone-950 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-xs">
-                  {tier.badge}
+                  {tier.badge || 'Recommandée'}
                 </div>
               )}
 
@@ -84,7 +90,7 @@ export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
                       : 'bg-stone-900 hover:bg-stone-800 text-white'
                   }`}
                 >
-                  {tier.ctaText}
+                  {tier.ctaText || 'Rejoindre le Club'}
                 </button>
               </div>
             </div>

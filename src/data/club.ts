@@ -8,6 +8,37 @@ export interface MembershipTier {
   features: string[];
   ctaText: string;
   recommended?: boolean;
+  active?: boolean;
+}
+
+export interface ClubMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  city: string;
+  postalCode: string;
+  role: 'admin' | 'captain' | 'member';
+  status: 'active' | 'pending' | 'expired';
+  membershipTierId: string;
+  membershipTierName: string;
+  joinDate: string;
+  expirationDate: string;
+  jerseySize: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
+  subscribedToNewsletter: boolean;
+  preferredDiscipline: 'all' | 'vtt' | 'gravel' | 'route';
+  notes?: string;
+}
+
+export interface SentEmail {
+  id: string;
+  dateSent: string;
+  subject: string;
+  targetSegment: string;
+  recipientsCount: number;
+  previewSnippet: string;
+  sentBy: string;
 }
 
 export const MEMBERSHIP_TIERS: MembershipTier[] = [
@@ -27,6 +58,7 @@ export const MEMBERSHIP_TIERS: MembershipTier[] = [
     ],
     ctaText: 'Prendre un Pass Découverte',
     recommended: false,
+    active: true,
   },
   {
     id: 'tier-annual',
@@ -46,6 +78,7 @@ export const MEMBERSHIP_TIERS: MembershipTier[] = [
     ],
     ctaText: 'Rejoindre le Club (Annuel)',
     recommended: true,
+    active: true,
   },
   {
     id: 'tier-pack-pro',
@@ -64,20 +97,149 @@ export const MEMBERSHIP_TIERS: MembershipTier[] = [
     ],
     ctaText: 'Devenir Membre Privilège',
     recommended: false,
+    active: true,
   }
 ];
 
-export interface WeeklyRideSlot {
-  day: string;
-  seasonContext: string;
-  name: string;
-  discipline: string;
-  time: string;
-  paceGroups: string;
-  spirit: string;
-}
+export const INITIAL_MEMBERS: ClubMember[] = [
+  {
+    id: 'mem-001',
+    firstName: 'Guy',
+    lastName: 'Materne',
+    email: 'guymaterne@gmail.com',
+    phone: '+32 470 11 22 33',
+    city: 'Wavre',
+    postalCode: '1300',
+    role: 'admin',
+    status: 'active',
+    membershipTierId: 'tier-pack-pro',
+    membershipTierName: 'Pack Pelotons & Aventures',
+    joinDate: '2026-01-01',
+    expirationDate: '2027-12-31',
+    jerseySize: 'L',
+    subscribedToNewsletter: true,
+    preferredDiscipline: 'all',
+    notes: 'Référent officiel KM0 Belgique & Administrateur Principal',
+  },
+  {
+    id: 'mem-002',
+    firstName: 'Alexandre',
+    lastName: 'De Backer',
+    email: 'alex.debacker@skynet.be',
+    phone: '+32 475 22 33 44',
+    city: 'Aywaille',
+    postalCode: '4920',
+    role: 'captain',
+    status: 'active',
+    membershipTierId: 'tier-annual',
+    membershipTierName: 'Membre Club KM0 Belgique',
+    joinDate: '2026-02-15',
+    expirationDate: '2027-02-14',
+    jerseySize: 'M',
+    subscribedToNewsletter: true,
+    preferredDiscipline: 'vtt',
+    notes: 'Capitaine de route référent pour la vallée de l’Amblève et les Ardennes',
+  },
+  {
+    id: 'mem-003',
+    firstName: 'Céline',
+    lastName: 'Vandenameele',
+    email: 'celine.vdm@proximus.be',
+    phone: '+32 486 99 88 77',
+    city: 'Louvain-la-Neuve',
+    postalCode: '1348',
+    role: 'captain',
+    status: 'active',
+    membershipTierId: 'tier-annual',
+    membershipTierName: 'Membre Club KM0 Belgique',
+    joinDate: '2026-03-01',
+    expirationDate: '2027-02-28',
+    jerseySize: 'S',
+    subscribedToNewsletter: true,
+    preferredDiscipline: 'gravel',
+    notes: 'Capitaine de route Gravel Brabant & animatrice du Social Coffee Ride',
+  },
+  {
+    id: 'mem-004',
+    firstName: 'Julien',
+    lastName: 'Renard',
+    email: 'j.renard@telenet.be',
+    phone: '+32 494 55 44 33',
+    city: 'Liège',
+    postalCode: '4000',
+    role: 'member',
+    status: 'active',
+    membershipTierId: 'tier-annual',
+    membershipTierName: 'Membre Club KM0 Belgique',
+    joinDate: '2026-04-10',
+    expirationDate: '2027-04-09',
+    jerseySize: 'XL',
+    subscribedToNewsletter: true,
+    preferredDiscipline: 'route',
+    notes: 'Inscrit pour les classiques et sorties Redoute',
+  },
+  {
+    id: 'mem-005',
+    firstName: 'Sophie',
+    lastName: 'Lemoine',
+    email: 'sophie.lemoine@outlook.be',
+    phone: '+32 478 66 11 22',
+    city: 'Namur',
+    postalCode: '5000',
+    role: 'member',
+    status: 'active',
+    membershipTierId: 'tier-discovery',
+    membershipTierName: 'Formule Découverte 3 Rides',
+    joinDate: '2026-09-12',
+    expirationDate: '2026-11-12',
+    jerseySize: 'M',
+    subscribedToNewsletter: true,
+    preferredDiscipline: 'vtt',
+    notes: 'A débuté avec la sortie VTT d’Aywaille',
+  },
+  {
+    id: 'mem-006',
+    firstName: 'Marc',
+    lastName: 'Dubois',
+    email: 'marc.dubois@voo.be',
+    phone: '+32 471 33 55 77',
+    city: 'Oudenaarde',
+    postalCode: '9700',
+    role: 'member',
+    status: 'pending',
+    membershipTierId: 'tier-annual',
+    membershipTierName: 'Membre Club KM0 Belgique',
+    joinDate: '2026-10-20',
+    expirationDate: '2027-10-19',
+    jerseySize: 'L',
+    subscribedToNewsletter: false,
+    preferredDiscipline: 'route',
+    notes: 'En attente de certificat médical de non-contre indication',
+  }
+];
 
-export const WEEKLY_SCHEDULE: WeeklyRideSlot[] = [
+export const INITIAL_SENT_EMAILS: SentEmail[] = [
+  {
+    id: 'mail-01',
+    dateSent: '2026-10-22 17:30',
+    subject: '🚴‍♂️ Programme VTT d’Hiver & Ouverture des Inscriptions Ardennes',
+    targetSegment: 'Tous les membres adhérents (5)',
+    recipientsCount: 5,
+    previewSnippet: 'Bonjour à tous, les feuilles tombent et la boue ardennaise nous attend ! Voici le calendrier des 4 prochaines sorties VTT encadrées...',
+    sentBy: 'Guy Materne',
+  },
+  {
+    id: 'mail-02',
+    dateSent: '2026-10-14 09:15',
+    subject: '☕ Briefing Capitaines de Route : Gestion des Allures et Sécurité Hiver',
+    targetSegment: 'Capitaines de route uniquement (2)',
+    recipientsCount: 2,
+    previewSnippet: 'Chers capitaines, petit point sur le protocole d’arrêt et le matériel de secours à emporter pour les hivernales...',
+    sentBy: 'Guy Materne',
+  }
+];
+
+export const WEEKLY_SCHEDULE = [
   {
     day: 'Samedi Matin',
     seasonContext: 'Hiver (Nov-Fév) : VTT / Mars-Octobre : Gravel & Route',

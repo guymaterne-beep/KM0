@@ -1,0 +1,6 @@
+{
+  "summary":  "Plan d'implémentation complet pour l'administration avancée de Projet KM0 Belgique :\n- Gestion des utilisateurs et membres du club (profils, statuts d'adhésion, dates d'expiration, licences)\n- Contrôle d'accès et attribution des rôles (Administrateur, Capitaine de route, Membre adhérent)\n- Module de Mailing List & Newsletter (gestion des abonnés, filtres par groupe, export CSV et compositeur d'emails du club)\n- Moteur dynamique d'abonnements et adhésions (création de nouvelles formules, édition des tarifs en €, avantages, statuts recommandés et synchronisation directe avec le site public)",
+  "updatedAt":  "2026-10-28T19:59:23.950868525Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

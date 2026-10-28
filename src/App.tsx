@@ -25,7 +25,7 @@ import { MembershipTier, MEMBERSHIP_TIERS } from './data/club';
 import { Settings, ShieldCheck, ArrowRight, LayoutDashboard } from 'lucide-react';
 
 function AppContent() {
-  const { isAdminLoggedIn, adminEmail } = useApp();
+  const { isAdminLoggedIn, adminEmail, membershipTiers } = useApp();
 
   // Navigation mode: public website vs back-office view
   const [isAdminView, setIsAdminView] = useState(false);
@@ -38,7 +38,8 @@ function AppContent() {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   const handleOpenDefaultMembership = () => {
-    const recommended = MEMBERSHIP_TIERS.find((t) => t.recommended) || MEMBERSHIP_TIERS[1];
+    const activeTiers = membershipTiers.filter((t) => t.active !== false);
+    const recommended = activeTiers.find((t) => t.recommended) || activeTiers[0] || MEMBERSHIP_TIERS[1];
     setSelectedTier(recommended);
   };
 

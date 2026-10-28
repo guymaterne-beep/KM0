@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { RIDES_DATA, Ride } from '../data/rides';
 import { TRIPS_DATA, Trip } from '../data/trips';
+import {
+  MEMBERSHIP_TIERS,
+  MembershipTier,
+  INITIAL_MEMBERS,
+  ClubMember,
+  INITIAL_SENT_EMAILS,
+  SentEmail,
+} from '../data/club';
 
 export interface Registration {
   id: string;
@@ -19,22 +27,51 @@ interface AppContextType {
   rides: Ride[];
   trips: Trip[];
   registrations: Registration[];
+  members: ClubMember[];
+  membershipTiers: MembershipTier[];
+  sentEmails: SentEmail[];
   isAdminLoggedIn: boolean;
   adminEmail: string;
   loginAdmin: (email: string, pass: string) => boolean;
   logoutAdmin: () => void;
+
   // Rides CRUD
   addRide: (ride: Omit<Ride, 'id' | 'registeredCount'>) => void;
   updateRide: (id: string, updated: Partial<Ride>) => void;
   deleteRide: (id: string) => void;
+
   // Trips CRUD
   addTrip: (trip: Omit<Trip, 'id'>) => void;
   updateTrip: (id: string, updated: Partial<Trip>) => void;
   deleteTrip: (id: string) => void;
+
   // Registrations
   addRegistration: (reg: Omit<Registration, 'id' | 'dateCreated' | 'status'>) => void;
   updateRegistrationStatus: (id: string, status: Registration['status']) => void;
   deleteRegistration: (id: string) => void;
+
+  // Members & Roles CRUD
+  addMember: (member: Omit<ClubMember, 'id' | 'joinDate'>) => void;
+  updateMember: (id: string, updated: Partial<ClubMember>) => void;
+  deleteMember: (id: string) => void;
+  updateMemberRole: (id: string, role: ClubMember['role']) => void;
+  toggleNewsletterSubscription: (id: string) => void;
+
+  // Membership Tiers & Pricing CRUD
+  addMembershipTier: (tier: Omit<MembershipTier, 'id'>) => void;
+  updateMembershipTier: (id: string, updated: Partial<MembershipTier>) => void;
+  deleteMembershipTier: (id: string) => void;
+  toggleTierActive: (id: string) => void;
+  setRecommendedTier: (id: string) => void;
+
+  // Mailing List & Email Broadcasts
+  sendBroadcastEmail: (emailData: {
+    subject: string;
+    targetSegment: string;
+    body: string;
+    recipientsCount: number;
+  }) => void;
+
   // Reset demo data
   resetToDefault: () => void;
 }
@@ -42,10 +79,13 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const STORAGE_KEYS = {
-  RIDES: 'km0_be_rides_v2',
-  TRIPS: 'km0_be_trips_v2',
-  REGISTRATIONS: 'km0_be_registrations_v2',
-  AUTH: 'km0_be_admin_auth_v2',
+  RIDES: 'km0_be_rides_v3',
+  TRIPS: 'km0_be_trips_v3',
+  REGISTRATIONS: 'km0_be_registrations_v3',
+  MEMBERS: 'km0_be_members_v3',
+  TIERS: 'km0_be_tiers_v3',
+  EMAILS: 'km0_be_emails_v3',
+  AUTH: 'km0_be_admin_auth_v3',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -67,11 +107,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
+  const [members, setMembers] = useState<ClubMember[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.MEMBERS);
+      return stored ? JSON.parse(stored) : INITIAL_MEMBERS;
+    } catch {
+      return INITIAL_MEMBERS;
+    }
+  });
+
+  const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.TIERS);
+      return stored ? JSON.parse(stored) : MEMBERSHIP_TIERS;
+    } catch {
+      return MEMBERSHIP_TIERS;
+    }
+  });
+
+  const [sentEmails, setSentEmails] = useState<SentEmail[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.EMAILS);
+      return stored ? JSON.parse(stored) : INITIAL_SENT_EMAILS;
+    } catch {
+      return INITIAL_SENT_EMAILS;
+    }
+  });
+
   const [registrations, setRegistrations] = useState<Registration[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.REGISTRATIONS);
       if (stored) return JSON.parse(stored);
-      // Seed with realistic initial registrations
       return [
         {
           id: 'reg-001',
@@ -99,15 +165,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         },
         {
           id: 'reg-003',
-          type: 'ride',
-          targetId: 'ride-gravel-brabant',
-          targetTitle: 'La Brabançonne des Chemins Creux & Pavés Doux',
-          name: 'Maxime Van Damme',
-          email: 'maxime.vd@proximus.be',
-          phone: '+32 486 33 22 11',
+          type: 'membership',
+          targetId: 'tier-annual',
+          targetTitle: 'Adhésion : Membre Club KM0 Belgique',
+          name: 'Julien Renard',
+          email: 'j.renard@telenet.be',
+          phone: '+32 494 55 44 33',
           dateCreated: '2026-10-26 18:40',
-          details: { paceGroup: 'tempo', bikeModel: 'Ridley Kanzo 45mm' },
-          status: 'en_attente',
+          details: { city: 'Liège', postalCode: '4000', jerseySize: 'XL', price: 160 },
+          status: 'confirmé',
         },
       ];
     } catch {
@@ -145,6 +211,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     try {
+      localStorage.setItem(STORAGE_KEYS.MEMBERS, JSON.stringify(members));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [members]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.TIERS, JSON.stringify(membershipTiers));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [membershipTiers]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.EMAILS, JSON.stringify(sentEmails));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [sentEmails]);
+
+  useEffect(() => {
+    try {
       localStorage.setItem(STORAGE_KEYS.REGISTRATIONS, JSON.stringify(registrations));
     } catch (e) {
       console.error(e);
@@ -152,7 +242,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [registrations]);
 
   const loginAdmin = (email: string, pass: string): boolean => {
-    // Allows Guy Materne or standard test pass
     const cleanEmail = email.trim().toLowerCase();
     if (
       (cleanEmail === 'guymaterne@gmail.com' || cleanEmail === 'admin@projet-km0.be' || cleanEmail === 'admin') &&
@@ -163,7 +252,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem(STORAGE_KEYS.AUTH, 'true');
       return true;
     }
-    // Also accept simple login for ease of demo
     if (pass === 'km0' || pass === 'admin') {
       setIsAdminLoggedIn(true);
       setAdminEmail(cleanEmail || 'guymaterne@gmail.com');
@@ -214,7 +302,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteTrip = (id: string) => {
-    setTrips((prev) => prev.filter((t) => t.id !== id));
+    setTrips((prev) => prev.filter((r) => r.id !== id));
   };
 
   // Registrations operations
@@ -237,6 +325,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         )
       );
     }
+
+    // If it's a membership signup, add or update member in database
+    if (reg.type === 'membership') {
+      const parts = reg.name.split(' ');
+      const firstName = parts[0] || 'Nouveau';
+      const lastName = parts.slice(1).join(' ') || 'Membre';
+      const existing = members.find((m) => m.email.toLowerCase() === reg.email.toLowerCase());
+      if (!existing) {
+        const newMember: ClubMember = {
+          id: `mem-${Date.now()}`,
+          firstName,
+          lastName,
+          email: reg.email,
+          phone: reg.phone,
+          city: reg.details?.city || 'Belgique',
+          postalCode: reg.details?.postalCode || '',
+          role: 'member',
+          status: 'active',
+          membershipTierId: reg.targetId,
+          membershipTierName: reg.targetTitle,
+          joinDate: now.toISOString().slice(0, 10),
+          expirationDate: new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()).toISOString().slice(0, 10),
+          jerseySize: (reg.details?.jerseySize as any) || 'M',
+          subscribedToNewsletter: true,
+          preferredDiscipline: (reg.details?.preferredDiscipline as any) || 'all',
+          notes: 'Adhésion en ligne via le site public',
+        };
+        setMembers((prev) => [newMember, ...prev]);
+      }
+    }
   };
 
   const updateRegistrationStatus = (id: string, status: Registration['status']) => {
@@ -249,11 +367,103 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setRegistrations((prev) => prev.filter((r) => r.id !== id));
   };
 
+  // Members Operations
+  const addMember = (memberData: Omit<ClubMember, 'id' | 'joinDate'>) => {
+    const now = new Date().toISOString().slice(0, 10);
+    const newMember: ClubMember = {
+      ...memberData,
+      id: `mem-${Date.now()}`,
+      joinDate: now,
+    };
+    setMembers((prev) => [newMember, ...prev]);
+  };
+
+  const updateMember = (id: string, updated: Partial<ClubMember>) => {
+    setMembers((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, ...updated } : m))
+    );
+  };
+
+  const deleteMember = (id: string) => {
+    setMembers((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  const updateMemberRole = (id: string, role: ClubMember['role']) => {
+    setMembers((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, role } : m))
+    );
+  };
+
+  const toggleNewsletterSubscription = (id: string) => {
+    setMembers((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, subscribedToNewsletter: !m.subscribedToNewsletter } : m))
+    );
+  };
+
+  // Membership Tiers Operations
+  const addMembershipTier = (tierData: Omit<MembershipTier, 'id'>) => {
+    const newTier: MembershipTier = {
+      ...tierData,
+      id: `tier-${Date.now()}`,
+      active: true,
+    };
+    setMembershipTiers((prev) => [...prev, newTier]);
+  };
+
+  const updateMembershipTier = (id: string, updated: Partial<MembershipTier>) => {
+    setMembershipTiers((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, ...updated } : t))
+    );
+  };
+
+  const deleteMembershipTier = (id: string) => {
+    setMembershipTiers((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const toggleTierActive = (id: string) => {
+    setMembershipTiers((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, active: t.active === false ? true : false } : t))
+    );
+  };
+
+  const setRecommendedTier = (id: string) => {
+    setMembershipTiers((prev) =>
+      prev.map((t) => ({ ...t, recommended: t.id === id }))
+    );
+  };
+
+  // Mailing List & Broadcast
+  const sendBroadcastEmail = (emailData: {
+    subject: string;
+    targetSegment: string;
+    body: string;
+    recipientsCount: number;
+  }) => {
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 16).replace('T', ' ');
+    const newRecord: SentEmail = {
+      id: `mail-${Date.now()}`,
+      dateSent: dateStr,
+      subject: emailData.subject,
+      targetSegment: emailData.targetSegment,
+      recipientsCount: emailData.recipientsCount,
+      previewSnippet: emailData.body.slice(0, 120) + (emailData.body.length > 120 ? '...' : ''),
+      sentBy: adminEmail.includes('@') ? 'Guy Materne' : 'Administration KM0',
+    };
+    setSentEmails((prev) => [newRecord, ...prev]);
+  };
+
   const resetToDefault = () => {
     setRides(RIDES_DATA);
     setTrips(TRIPS_DATA);
+    setMembers(INITIAL_MEMBERS);
+    setMembershipTiers(MEMBERSHIP_TIERS);
+    setSentEmails(INITIAL_SENT_EMAILS);
     localStorage.removeItem(STORAGE_KEYS.RIDES);
     localStorage.removeItem(STORAGE_KEYS.TRIPS);
+    localStorage.removeItem(STORAGE_KEYS.MEMBERS);
+    localStorage.removeItem(STORAGE_KEYS.TIERS);
+    localStorage.removeItem(STORAGE_KEYS.EMAILS);
   };
 
   return (
@@ -262,6 +472,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         rides,
         trips,
         registrations,
+        members,
+        membershipTiers,
+        sentEmails,
         isAdminLoggedIn,
         adminEmail,
         loginAdmin,
@@ -275,6 +488,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addRegistration,
         updateRegistrationStatus,
         deleteRegistration,
+        addMember,
+        updateMember,
+        deleteMember,
+        updateMemberRole,
+        toggleNewsletterSubscription,
+        addMembershipTier,
+        updateMembershipTier,
+        deleteMembershipTier,
+        toggleTierActive,
+        setRecommendedTier,
+        sendBroadcastEmail,
         resetToDefault,
       }}
     >
