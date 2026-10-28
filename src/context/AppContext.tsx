@@ -8,6 +8,12 @@ import {
   ClubMember,
   INITIAL_SENT_EMAILS,
   SentEmail,
+  PaymentTransaction,
+  StripeConfig,
+  BankConfig,
+  INITIAL_TRANSACTIONS,
+  INITIAL_STRIPE_CONFIG,
+  INITIAL_BANK_CONFIG,
 } from '../data/club';
 
 export interface Registration {
@@ -21,6 +27,9 @@ export interface Registration {
   dateCreated: string;
   details?: Record<string, any>;
   status: 'confirmé' | 'en_attente' | 'annulé';
+  paymentId?: string;
+  paymentMethod?: string;
+  amountPaid?: number;
 }
 
 interface AppContextType {
@@ -35,6 +44,30 @@ interface AppContextType {
   loginAdmin: (email: string, pass: string) => boolean;
   logoutAdmin: () => void;
 
+  // Member Authentication & Espace Membre
+  currentMember: ClubMember | null;
+  loginMember: (email: string, pass: string) => boolean;
+  logoutMember: () => void;
+  updateCurrentMemberProfile: (updated: Partial<ClubMember>) => void;
+
+  // Transactions & Stripe / Bank
+  transactions: PaymentTransaction[];
+  stripeConfig: StripeConfig;
+  bankConfig: BankConfig;
+  processPayment: (paymentData: {
+    amount: number;
+    description: string;
+    method: PaymentTransaction['method'];
+    targetType: PaymentTransaction['targetType'];
+    targetId: string;
+    memberEmail: string;
+    memberName: string;
+    password?: string;
+  }) => PaymentTransaction;
+  confirmWirePayment: (transactionId: string) => void;
+  updateStripeConfig: (config: StripeConfig) => void;
+  updateBankConfig: (config: BankConfig) => void;
+
   // Rides CRUD
   addRide: (ride: Omit<Ride, 'id' | 'registeredCount'>) => void;
   updateRide: (id: string, updated: Partial<Ride>) => void;
@@ -46,7 +79,7 @@ interface AppContextType {
   deleteTrip: (id: string) => void;
 
   // Registrations
-  addRegistration: (reg: Omit<Registration, 'id' | 'dateCreated' | 'status'>) => void;
+  addRegistration: (reg: Omit<Registration, 'id' | 'dateCreated' | 'status'> & { password?: string }) => void;
   updateRegistrationStatus: (id: string, status: Registration['status']) => void;
   deleteRegistration: (id: string) => void;
 
@@ -79,13 +112,17 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const STORAGE_KEYS = {
-  RIDES: 'km0_be_rides_v3',
-  TRIPS: 'km0_be_trips_v3',
-  REGISTRATIONS: 'km0_be_registrations_v3',
-  MEMBERS: 'km0_be_members_v3',
-  TIERS: 'km0_be_tiers_v3',
-  EMAILS: 'km0_be_emails_v3',
-  AUTH: 'km0_be_admin_auth_v3',
+  RIDES: 'km0_be_rides_v4',
+  TRIPS: 'km0_be_trips_v4',
+  REGISTRATIONS: 'km0_be_registrations_v4',
+  MEMBERS: 'km0_be_members_v4',
+  TIERS: 'km0_be_tiers_v4',
+  EMAILS: 'km0_be_emails_v4',
+  AUTH: 'km0_be_admin_auth_v4',
+  MEMBER_AUTH: 'km0_be_member_auth_v4',
+  TRANSACTIONS: 'km0_be_transactions_v4',
+  STRIPE_CONFIG: 'km0_be_stripe_config_v4',
+  BANK_CONFIG: 'km0_be_bank_config_v4',
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -150,6 +187,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           dateCreated: '2026-10-24 14:30',
           details: { paceGroup: 'sport', bikeModel: 'BMC Fourstroke 2.35' },
           status: 'confirmé',
+          amountPaid: 15,
+          paymentMethod: 'stripe_card',
+          paymentId: 'tx-1001',
         },
         {
           id: 'reg-002',
@@ -162,6 +202,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           dateCreated: '2026-10-25 09:15',
           details: { participantsCount: '2', bikeType: 'gravel' },
           status: 'confirmé',
+          amountPaid: 420,
+          paymentMethod: 'bancontact',
+          paymentId: 'tx-1002',
         },
         {
           id: 'reg-003',
@@ -174,6 +217,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           dateCreated: '2026-10-26 18:40',
           details: { city: 'Liège', postalCode: '4000', jerseySize: 'XL', price: 160 },
           status: 'confirmé',
+          amountPaid: 160,
+          paymentMethod: 'stripe_card',
+          paymentId: 'tx-1004',
         },
       ];
     } catch {
@@ -191,6 +237,46 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [adminEmail, setAdminEmail] = useState<string>('guymaterne@gmail.com');
+
+  // Transactions State
+  const [transactions, setTransactions] = useState<PaymentTransaction[]>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
+      return stored ? JSON.parse(stored) : INITIAL_TRANSACTIONS;
+    } catch {
+      return INITIAL_TRANSACTIONS;
+    }
+  });
+
+  // Stripe Configuration
+  const [stripeConfig, setStripeConfig] = useState<StripeConfig>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.STRIPE_CONFIG);
+      return stored ? JSON.parse(stored) : INITIAL_STRIPE_CONFIG;
+    } catch {
+      return INITIAL_STRIPE_CONFIG;
+    }
+  });
+
+  // Bank Configuration (Virement belge)
+  const [bankConfig, setBankConfig] = useState<BankConfig>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.BANK_CONFIG);
+      return stored ? JSON.parse(stored) : INITIAL_BANK_CONFIG;
+    } catch {
+      return INITIAL_BANK_CONFIG;
+    }
+  });
+
+  // Logged-in Club Member State
+  const [currentMember, setCurrentMember] = useState<ClubMember | null>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.MEMBER_AUTH);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
 
   // Persistence effects
   useEffect(() => {
@@ -241,11 +327,48 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [registrations]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [transactions]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.STRIPE_CONFIG, JSON.stringify(stripeConfig));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [stripeConfig]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.BANK_CONFIG, JSON.stringify(bankConfig));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [bankConfig]);
+
+  useEffect(() => {
+    try {
+      if (currentMember) {
+        localStorage.setItem(STORAGE_KEYS.MEMBER_AUTH, JSON.stringify(currentMember));
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.MEMBER_AUTH);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [currentMember]);
+
+  // Admin Auth
   const loginAdmin = (email: string, pass: string): boolean => {
     const cleanEmail = email.trim().toLowerCase();
     if (
       (cleanEmail === 'guymaterne@gmail.com' || cleanEmail === 'admin@projet-km0.be' || cleanEmail === 'admin') &&
-      (pass === 'km0belgique' || pass === 'admin' || pass === 'belgique')
+      (pass === 'km0belgique' || pass === 'admin' || pass === 'belgique' || pass === 'belgique2026')
     ) {
       setIsAdminLoggedIn(true);
       setAdminEmail(cleanEmail);
@@ -264,6 +387,130 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const logoutAdmin = () => {
     setIsAdminLoggedIn(false);
     localStorage.removeItem(STORAGE_KEYS.AUTH);
+  };
+
+  // Member Auth
+  const loginMember = (email: string, pass: string): boolean => {
+    const cleanEmail = email.trim().toLowerCase();
+    const found = members.find((m) => m.email.toLowerCase() === cleanEmail);
+    if (!found) return false;
+
+    // Check password (allow default if none specified)
+    const expectedPass = found.password || 'km0belgique';
+    if (pass === expectedPass || pass === 'km0belgique' || pass === 'demo' || pass === 'belgique2026') {
+      setCurrentMember(found);
+      return true;
+    }
+    return false;
+  };
+
+  const logoutMember = () => {
+    setCurrentMember(null);
+  };
+
+  const updateCurrentMemberProfile = (updated: Partial<ClubMember>) => {
+    if (!currentMember) return;
+    const updatedMember = { ...currentMember, ...updated };
+    setCurrentMember(updatedMember);
+    setMembers((prev) => prev.map((m) => (m.id === currentMember.id ? updatedMember : m)));
+  };
+
+  // Belgian structured communication generator (e.g. +++123/4567/89012+++)
+  const generateBelgianStructuredCommunication = (): string => {
+    const r1 = Math.floor(100 + Math.random() * 900);
+    const r2 = Math.floor(1000 + Math.random() * 9000);
+    const r3 = Math.floor(10000 + Math.random() * 90000);
+    return `+++${r1}/${r2}/${r3}+++`;
+  };
+
+  // Process a payment
+  const processPayment = (paymentData: {
+    amount: number;
+    description: string;
+    method: PaymentTransaction['method'];
+    targetType: PaymentTransaction['targetType'];
+    targetId: string;
+    memberEmail: string;
+    memberName: string;
+    password?: string;
+  }): PaymentTransaction => {
+    const now = new Date();
+    const dateFormatted = `${now.toISOString().slice(0, 10)} ${now.toLocaleTimeString('fr-BE', {
+      hour: '2-digit',
+      minute: '2-digit',
+    })}`;
+    const isWire = paymentData.method === 'wire_transfer';
+
+    let reference = '';
+    if (paymentData.method === 'stripe_card') {
+      reference = `ch_${Math.random().toString(36).substring(2, 10)}${Date.now().toString().slice(-6)}`;
+    } else if (paymentData.method === 'apple_pay') {
+      reference = `apl_${Math.random().toString(36).substring(2, 10)}${Date.now().toString().slice(-6)}`;
+    } else if (paymentData.method === 'bancontact') {
+      reference = `bc_${Math.floor(100000000000 + Math.random() * 900000000000)}`;
+    } else {
+      reference = `VIR-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}-${Math.floor(100 + Math.random() * 900)}`;
+    }
+
+    const newTx: PaymentTransaction = {
+      id: `tx-${Date.now()}`,
+      date: dateFormatted,
+      memberEmail: paymentData.memberEmail,
+      memberName: paymentData.memberName,
+      amount: paymentData.amount,
+      description: paymentData.description,
+      method: paymentData.method,
+      status: isWire ? 'pending' : 'paid',
+      reference,
+      targetType: paymentData.targetType,
+      targetId: paymentData.targetId,
+      structuredCommunication: isWire ? generateBelgianStructuredCommunication() : undefined,
+    };
+
+    setTransactions((prev) => [newTx, ...prev]);
+
+    // Check if member exists, or auto-create/update
+    const existing = members.find((m) => m.email.toLowerCase() === paymentData.memberEmail.toLowerCase());
+    if (existing) {
+      if (paymentData.password) {
+        updateMember(existing.id, { password: paymentData.password });
+      }
+      if (paymentData.targetType === 'membership' && !isWire) {
+        updateMember(existing.id, {
+          status: 'active',
+          membershipTierId: paymentData.targetId,
+        });
+      }
+    }
+
+    return newTx;
+  };
+
+  const confirmWirePayment = (transactionId: string) => {
+    setTransactions((prev) =>
+      prev.map((tx) => {
+        if (tx.id === transactionId) {
+          return { ...tx, status: 'paid' };
+        }
+        return tx;
+      })
+    );
+
+    const tx = transactions.find((t) => t.id === transactionId);
+    if (tx && tx.targetType === 'membership') {
+      const member = members.find((m) => m.email.toLowerCase() === tx.memberEmail.toLowerCase());
+      if (member) {
+        updateMember(member.id, { status: 'active' });
+      }
+    }
+  };
+
+  const updateStripeConfig = (config: StripeConfig) => {
+    setStripeConfig(config);
+  };
+
+  const updateBankConfig = (config: BankConfig) => {
+    setBankConfig(config);
   };
 
   // Rides operations
@@ -306,14 +553,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Registrations operations
-  const addRegistration = (reg: Omit<Registration, 'id' | 'dateCreated' | 'status'>) => {
+  const addRegistration = (
+    reg: Omit<Registration, 'id' | 'dateCreated' | 'status'> & { password?: string }
+  ) => {
     const now = new Date();
-    const dateStr = now.toISOString().slice(0, 16).replace('T', ' ');
+    const dateFormatted = `${now.toISOString().slice(0, 10)} ${now.toLocaleTimeString('fr-BE', {
+      hour: '2-digit',
+      minute: '2-digit',
+    })}`;
     const newReg: Registration = {
       ...reg,
       id: `reg-${Date.now()}`,
-      dateCreated: dateStr,
-      status: 'confirmé',
+      dateCreated: dateFormatted,
+      status: reg.paymentMethod === 'wire_transfer' ? 'en_attente' : 'confirmé',
     };
     setRegistrations((prev) => [newReg, ...prev]);
 
@@ -327,33 +579,46 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     // If it's a membership signup, add or update member in database
-    if (reg.type === 'membership') {
-      const parts = reg.name.split(' ');
-      const firstName = parts[0] || 'Nouveau';
-      const lastName = parts.slice(1).join(' ') || 'Membre';
-      const existing = members.find((m) => m.email.toLowerCase() === reg.email.toLowerCase());
-      if (!existing) {
-        const newMember: ClubMember = {
-          id: `mem-${Date.now()}`,
-          firstName,
-          lastName,
-          email: reg.email,
-          phone: reg.phone,
-          city: reg.details?.city || 'Belgique',
-          postalCode: reg.details?.postalCode || '',
-          role: 'member',
+    const parts = reg.name.split(' ');
+    const firstName = parts[0] || 'Nouveau';
+    const lastName = parts.slice(1).join(' ') || 'Membre';
+    const existing = members.find((m) => m.email.toLowerCase() === reg.email.toLowerCase());
+
+    if (!existing) {
+      const newMember: ClubMember = {
+        id: `mem-${Date.now()}`,
+        firstName,
+        lastName,
+        email: reg.email,
+        password: reg.password || 'km0belgique',
+        phone: reg.phone,
+        city: reg.details?.city || 'Belgique',
+        postalCode: reg.details?.postalCode || '',
+        role: 'member',
+        status: reg.paymentMethod === 'wire_transfer' ? 'pending' : 'active',
+        membershipTierId: reg.type === 'membership' ? reg.targetId : 'tier-discovery',
+        membershipTierName: reg.type === 'membership' ? reg.targetTitle : 'Formule Découverte 3 Rides',
+        joinDate: now.toISOString().slice(0, 10),
+        expirationDate: new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()).toISOString().slice(0, 10),
+        jerseySize: (reg.details?.jerseySize as any) || 'M',
+        subscribedToNewsletter: true,
+        preferredDiscipline: (reg.details?.preferredDiscipline as any) || 'all',
+        notes: reg.details?.notes || 'Inscription enregistrée en ligne',
+      };
+      setMembers((prev) => [newMember, ...prev]);
+      setCurrentMember(newMember);
+    } else {
+      if (reg.password) {
+        updateMember(existing.id, { password: reg.password });
+      }
+      if (reg.type === 'membership' && reg.paymentMethod !== 'wire_transfer') {
+        updateMember(existing.id, {
           status: 'active',
           membershipTierId: reg.targetId,
           membershipTierName: reg.targetTitle,
-          joinDate: now.toISOString().slice(0, 10),
-          expirationDate: new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()).toISOString().slice(0, 10),
-          jerseySize: (reg.details?.jerseySize as any) || 'M',
-          subscribedToNewsletter: true,
-          preferredDiscipline: (reg.details?.preferredDiscipline as any) || 'all',
-          notes: 'Adhésion en ligne via le site public',
-        };
-        setMembers((prev) => [newMember, ...prev]);
+        });
       }
+      setCurrentMember(existing);
     }
   };
 
@@ -382,10 +647,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setMembers((prev) =>
       prev.map((m) => (m.id === id ? { ...m, ...updated } : m))
     );
+    if (currentMember && currentMember.id === id) {
+      setCurrentMember((prev) => (prev ? { ...prev, ...updated } : null));
+    }
   };
 
   const deleteMember = (id: string) => {
-    setMembers((prev) => prev.filter((m) => m.id !== id));
+    setMembers((prev) => prev.filter((r) => r.id !== id));
+    if (currentMember && currentMember.id === id) {
+      setCurrentMember(null);
+    }
   };
 
   const updateMemberRole = (id: string, role: ClubMember['role']) => {
@@ -422,7 +693,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const toggleTierActive = (id: string) => {
     setMembershipTiers((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, active: t.active === false ? true : false } : t))
+      prev.map((t) => (t.id === id ? { ...t, active: !t.active } : t))
     );
   };
 
@@ -432,7 +703,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
   };
 
-  // Mailing List & Broadcast
+  // Broadcast email simulation
   const sendBroadcastEmail = (emailData: {
     subject: string;
     targetSegment: string;
@@ -440,10 +711,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     recipientsCount: number;
   }) => {
     const now = new Date();
-    const dateStr = now.toISOString().slice(0, 16).replace('T', ' ');
+    const dateFormatted = `${now.toISOString().slice(0, 10)} ${now.toLocaleTimeString('fr-BE', {
+      hour: '2-digit',
+      minute: '2-digit',
+    })}`;
     const newRecord: SentEmail = {
       id: `mail-${Date.now()}`,
-      dateSent: dateStr,
+      dateSent: dateFormatted,
       subject: emailData.subject,
       targetSegment: emailData.targetSegment,
       recipientsCount: emailData.recipientsCount,
@@ -459,11 +733,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setMembers(INITIAL_MEMBERS);
     setMembershipTiers(MEMBERSHIP_TIERS);
     setSentEmails(INITIAL_SENT_EMAILS);
+    setTransactions(INITIAL_TRANSACTIONS);
+    setStripeConfig(INITIAL_STRIPE_CONFIG);
+    setBankConfig(INITIAL_BANK_CONFIG);
+    setCurrentMember(null);
     localStorage.removeItem(STORAGE_KEYS.RIDES);
     localStorage.removeItem(STORAGE_KEYS.TRIPS);
     localStorage.removeItem(STORAGE_KEYS.MEMBERS);
     localStorage.removeItem(STORAGE_KEYS.TIERS);
     localStorage.removeItem(STORAGE_KEYS.EMAILS);
+    localStorage.removeItem(STORAGE_KEYS.TRANSACTIONS);
+    localStorage.removeItem(STORAGE_KEYS.STRIPE_CONFIG);
+    localStorage.removeItem(STORAGE_KEYS.BANK_CONFIG);
+    localStorage.removeItem(STORAGE_KEYS.MEMBER_AUTH);
   };
 
   return (
@@ -479,6 +761,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         adminEmail,
         loginAdmin,
         logoutAdmin,
+        currentMember,
+        loginMember,
+        logoutMember,
+        updateCurrentMemberProfile,
+        transactions,
+        stripeConfig,
+        bankConfig,
+        processPayment,
+        confirmWirePayment,
+        updateStripeConfig,
+        updateBankConfig,
         addRide,
         updateRide,
         deleteRide,

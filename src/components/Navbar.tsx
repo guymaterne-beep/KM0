@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { Menu, X, Bike, Lock, UserCheck, Award, ExternalLink, ChevronRight, Settings } from 'lucide-react';
+import { Menu, X, Bike, Lock, UserCheck, Award, Settings, User } from 'lucide-react';
 
 interface NavbarProps {
   onOpenMembership: () => void;
   onOpenQuiz: () => void;
   onOpenAdminLogin: () => void;
   onOpenAdminDashboard: () => void;
+  onOpenMemberLogin: () => void;
+  onOpenMemberPortal: () => void;
 }
 
 export default function Navbar({
@@ -14,8 +16,10 @@ export default function Navbar({
   onOpenQuiz,
   onOpenAdminLogin,
   onOpenAdminDashboard,
+  onOpenMemberLogin,
+  onOpenMemberPortal,
 }: NavbarProps) {
-  const { isAdminLoggedIn, adminEmail } = useApp();
+  const { isAdminLoggedIn, adminEmail, currentMember } = useApp();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -38,7 +42,7 @@ export default function Navbar({
 
   return (
     <header className="sticky top-0 z-40 w-full transition-all duration-200">
-      {/* Top Banner: Season Announcement & Admin access */}
+      {/* Top Banner: Season Announcement, Member Space & Admin access */}
       <div className="bg-stone-100 text-stone-700 text-xs py-1.5 px-4 border-b border-stone-200/90">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 font-medium">
@@ -56,7 +60,7 @@ export default function Navbar({
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] text-stone-600">
+          <div className="flex items-center gap-3.5 text-[11px] text-stone-600">
             <button
               onClick={onOpenQuiz}
               className="text-stone-700 hover:text-amber-700 font-medium transition-colors flex items-center gap-1 cursor-pointer"
@@ -64,17 +68,30 @@ export default function Navbar({
               <Award className="w-3.5 h-3.5 text-amber-600" />
               <span>Calculer mon niveau KM0</span>
             </button>
+
             <span className="text-stone-300 hidden sm:inline">|</span>
-            <a
-              href="https://projet-km0.ch"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-stone-900 transition-colors hidden sm:flex items-center gap-1 text-stone-600"
-            >
-              <span>Antenne officielle Projet KM0</span>
-              <span className="text-[10px] text-stone-500">(CH)</span>
-            </a>
+
+            {/* Member Portal Link in Top Bar */}
+            {currentMember ? (
+              <button
+                onClick={onOpenMemberPortal}
+                className="text-amber-900 hover:text-amber-950 font-bold flex items-center gap-1 cursor-pointer bg-amber-200/70 hover:bg-amber-300 px-2 py-0.5 rounded transition-colors"
+              >
+                <UserCheck className="w-3 h-3 text-amber-800" />
+                <span>Espace Membre ({currentMember.firstName})</span>
+              </button>
+            ) : (
+              <button
+                onClick={onOpenMemberLogin}
+                className="text-stone-700 hover:text-stone-900 font-medium flex items-center gap-1 cursor-pointer"
+              >
+                <User className="w-3 h-3 text-stone-500" />
+                <span>Connexion Membre</span>
+              </button>
+            )}
+
             <span className="text-stone-300 hidden md:inline">|</span>
+
             {/* Back-office Direct Link */}
             {isAdminLoggedIn ? (
               <button
@@ -150,21 +167,32 @@ export default function Navbar({
 
           {/* Action CTAs */}
           <div className="hidden sm:flex items-center gap-2.5">
-            {isAdminLoggedIn ? (
+            {/* Member Portal Button */}
+            {currentMember ? (
+              <button
+                onClick={onOpenMemberPortal}
+                className="px-3.5 py-2 text-xs font-bold text-amber-950 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+              >
+                <UserCheck className="w-3.5 h-3.5 text-amber-700" />
+                <span>Mon Espace ({currentMember.firstName})</span>
+              </button>
+            ) : (
+              <button
+                onClick={onOpenMemberLogin}
+                className="px-3.5 py-2 text-xs font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <User className="w-3.5 h-3.5 text-stone-500" />
+                <span>Connexion Membre</span>
+              </button>
+            )}
+
+            {isAdminLoggedIn && (
               <button
                 onClick={onOpenAdminDashboard}
                 className="px-3.5 py-2 text-xs font-bold text-emerald-900 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
               >
                 <Settings className="w-3.5 h-3.5 text-emerald-700" />
-                <span>Gérer les activités</span>
-              </button>
-            ) : (
-              <button
-                onClick={onOpenAdminLogin}
-                className="px-3 py-2 text-xs font-semibold text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-xl transition-all cursor-pointer"
-                title="Connexion Référent / Gestionnaire"
-              >
-                Espace Admin
+                <span>Back-Office</span>
               </button>
             )}
 
@@ -211,7 +239,31 @@ export default function Navbar({
               </a>
             ))}
             <div className="pt-3 flex flex-col gap-2.5">
-              {isAdminLoggedIn ? (
+              {currentMember ? (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenMemberPortal();
+                  }}
+                  className="w-full py-2.5 text-center text-xs font-bold uppercase text-amber-950 bg-amber-100 border border-amber-300 rounded-xl flex items-center justify-center gap-2"
+                >
+                  <UserCheck className="w-4 h-4 text-amber-700" />
+                  <span>Mon Espace Membre ({currentMember.firstName})</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenMemberLogin();
+                  }}
+                  className="w-full py-2.5 text-center text-xs font-semibold text-stone-700 bg-stone-100 border border-stone-200 rounded-xl flex items-center justify-center gap-2"
+                >
+                  <User className="w-4 h-4 text-stone-500" />
+                  <span>Connexion Espace Membre</span>
+                </button>
+              )}
+
+              {isAdminLoggedIn && (
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
@@ -220,16 +272,6 @@ export default function Navbar({
                   className="w-full py-2.5 text-center text-xs font-bold uppercase text-emerald-900 bg-emerald-100 border border-emerald-300 rounded-xl"
                 >
                   Ouvrir le Back-Office (Guy Materne)
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenAdminLogin();
-                  }}
-                  className="w-full py-2.5 text-center text-xs font-semibold text-stone-700 bg-stone-100 border border-stone-200 rounded-xl"
-                >
-                  Connexion Back-Office Référent
                 </button>
               )}
 

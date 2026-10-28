@@ -1,33 +1,59 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Ride } from '../data/rides';
-import { X, Calendar, Clock, MapPin, Gauge, CheckCircle2, User, FileDown, Share2, Check } from 'lucide-react';
+import { PaymentTransaction } from '../data/club';
+import { X, Calendar, Clock, MapPin, Gauge, CheckCircle2, User, FileDown, Share2, Check, Lock, CreditCard } from 'lucide-react';
+import { PaymentCheckoutModal } from './payment/PaymentCheckoutModal';
 
 interface RideDetailModalProps {
   ride: Ride | null;
   onClose: () => void;
+  onOpenPortal?: () => void;
 }
 
-export default function RideDetailModal({ ride, onClose }: RideDetailModalProps) {
+export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDetailModalProps) {
   if (!ride) return null;
 
-  const { addRegistration } = useApp();
+  const { addRegistration, currentMember } = useApp();
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [completedTx, setCompletedTx] = useState<PaymentTransaction | null>(null);
+
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    firstName: currentMember ? currentMember.firstName : '',
+    lastName: currentMember ? currentMember.lastName : '',
+    email: currentMember ? currentMember.email : '',
+    password: '',
+    phone: currentMember ? currentMember.phone : '',
     bikeModel: '',
     paceGroup: 'tempo',
-    isMember: false,
+    isMember: !!currentMember,
     dietaryOrNotes: '',
   });
 
+  useEffect(() => {
+    if (currentMember) {
+      setFormData((prev) => ({
+        ...prev,
+        firstName: currentMember.firstName,
+        lastName: currentMember.lastName,
+        email: currentMember.email,
+        phone: currentMember.phone,
+        isMember: true,
+      }));
+    }
+  }, [currentMember]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Record registration in persistent store
+    if (!formData.isMember) {
+      // Non-member: open checkout modal for 15€ discovery ride ticket
+      setIsCheckoutOpen(true);
+      return;
+    }
+
+    // Member: Free entry
     addRegistration({
       type: 'ride',
       targetId: ride.id,
@@ -35,11 +61,41 @@ export default function RideDetailModal({ ride, onClose }: RideDetailModalProps)
       name: `${formData.firstName} ${formData.lastName}`.trim(),
       email: formData.email,
       phone: formData.phone,
+      password: formData.password || undefined,
+      amountPaid: 0,
+      paymentMethod: 'member_benefit',
       details: {
         paceGroup: formData.paceGroup,
         bikeModel: formData.bikeModel,
-        isMember: formData.isMember,
+        isMember: true,
         notes: formData.dietaryOrNotes,
+      },
+    });
+    setFormSubmitted(true);
+  };
+
+  const handlePaymentSuccess = (tx: PaymentTransaction) => {
+    setCompletedTx(tx);
+    setIsCheckoutOpen(false);
+
+    addRegistration({
+      type: 'ride',
+      targetId: ride.id,
+      targetTitle: ride.title,
+      name: `${formData.firstName} ${formData.lastName}`.trim(),
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password || undefined,
+      paymentId: tx.id,
+      paymentMethod: tx.method,
+      amountPaid: tx.amount,
+      details: {
+        paceGroup: formData.paceGroup,
+        bikeModel: formData.bikeModel,
+        isMember: false,
+        notes: formData.dietaryOrNotes,
+        reference: tx.reference,
+        structuredCommunication: tx.structuredCommunication,
       },
     });
     setFormSubmitted(true);
@@ -408,6 +464,22 @@ export default function RideDetailModal({ ride, onClose }: RideDetailModalProps)
                   </div>
                 </div>
 
+                {!currentMember && (
+                  <div className="bg-stone-50 p-3.5 rounded-xl border border-stone-200">
+                    <div className="flex items-center gap-1.5 mb-1 text-xs font-bold text-stone-800">
+                      <Lock className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Mot de passe (optionnel pour sécuriser votre compte membre)</span>
+                    </div>
+                    <input
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      placeholder="Définir un mot de passe..."
+                      className="w-full px-3 py-2 text-sm bg-white border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+                )}
+
                 <div className="flex items-center gap-2 pt-1">
                   <input
                     type="checkbox"
@@ -417,30 +489,59 @@ export default function RideDetailModal({ ride, onClose }: RideDetailModalProps)
                     className="w-4 h-4 rounded text-amber-500 border-stone-300 focus:ring-0"
                   />
                   <label htmlFor="isMemberModal" className="text-xs text-stone-600">
-                    Je suis déjà adhérent au club KM0 Belgique (ou j’utiliserai mon Pass Découverte)
+                    Je suis déjà adhérent au club KM0 Belgique (Gratuit · 0 €)
                   </label>
                 </div>
 
-                <div className="pt-3 flex items-center justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-4 py-2.5 text-xs font-semibold text-stone-600 hover:text-stone-900 cursor-pointer"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs transition-all cursor-pointer"
-                  >
-                    Confirmer mon Inscription
-                  </button>
+                <div className="pt-3 flex items-center justify-between">
+                  <span className="text-xs text-stone-500 font-medium">
+                    {formData.isMember ? 'Tarif Adhérent : Gratuit' : 'Tarif Pass Découverte : 15 €'}
+                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="px-4 py-2.5 text-xs font-semibold text-stone-600 hover:text-stone-900 cursor-pointer"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                    >
+                      {!formData.isMember ? (
+                        <>
+                          <CreditCard className="w-3.5 h-3.5" />
+                          <span>Payer ma participation (15 €)</span>
+                        </>
+                      ) : (
+                        <span>Confirmer mon Inscription (0 €)</span>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </form>
             )}
           </div>
         </div>
       </div>
+
+      {isCheckoutOpen && (
+        <PaymentCheckoutModal
+          isOpen={isCheckoutOpen}
+          onClose={() => setIsCheckoutOpen(false)}
+          amount={15}
+          itemTitle={`Sortie Club : ${ride.title}`}
+          itemSubtitle={`${ride.date} à ${ride.time} - ${ride.discipline.toUpperCase()}`}
+          targetType="ride"
+          targetId={ride.id}
+          customerName={`${formData.firstName} ${formData.lastName}`.trim()}
+          customerEmail={formData.email}
+          customerPhone={formData.phone}
+          password={formData.password}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
+      )}
     </div>
   );
 }

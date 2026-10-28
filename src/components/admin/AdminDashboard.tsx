@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Ride } from '../../data/rides';
 import { Trip } from '../../data/trips';
-import { ClubMember, MembershipTier } from '../../data/club';
+import { ClubMember, MembershipTier, PaymentTransaction, StripeConfig, BankConfig } from '../../data/club';
 
 import RideFormModal from './RideFormModal';
 import TripFormModal from './TripFormModal';
@@ -33,6 +33,12 @@ import {
   DollarSign,
   TrendingUp,
   Sparkles,
+  CreditCard,
+  Building2,
+  Lock,
+  Smartphone,
+  ExternalLink,
+  Receipt,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -47,6 +53,12 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
     members,
     membershipTiers,
     sentEmails,
+    transactions,
+    stripeConfig,
+    bankConfig,
+    confirmWirePayment,
+    updateStripeConfig,
+    updateBankConfig,
     adminEmail,
     logoutAdmin,
     addRide,
@@ -70,7 +82,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
     resetToDefault,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'members' | 'tiers' | 'mailing' | 'rides' | 'trips' | 'registrations' | 'overview'>('members');
+  const [activeTab, setActiveTab] = useState<'members' | 'tiers' | 'mailing' | 'payments' | 'rides' | 'trips' | 'registrations' | 'overview'>('members');
 
   // Modals state
   const [isRideModalOpen, setIsRideModalOpen] = useState(false);
@@ -92,6 +104,28 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
   const [filterRole, setFilterRole] = useState('all');
   const [filterMemberStatus, setFilterMemberStatus] = useState('all');
   const [filterDiscipline, setFilterDiscipline] = useState('all');
+  const [filterPaymentStatus, setFilterPaymentStatus] = useState<'all' | 'paid' | 'pending'>('all');
+
+  // Stripe & Bank local settings state
+  const [stripeForm, setStripeForm] = useState<StripeConfig>(stripeConfig);
+  const [bankForm, setBankForm] = useState<BankConfig>(bankConfig);
+  const [saveSettingsSuccess, setSaveSettingsSuccess] = useState(false);
+
+  useEffect(() => {
+    setStripeForm(stripeConfig);
+  }, [stripeConfig]);
+
+  useEffect(() => {
+    setBankForm(bankConfig);
+  }, [bankConfig]);
+
+  const handleSavePaymentSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateStripeConfig(stripeForm);
+    updateBankConfig(bankForm);
+    setSaveSettingsSuccess(true);
+    setTimeout(() => setSaveSettingsSuccess(false), 3000);
+  };
 
   // Stats calculation
   const totalMembersCount = members.length;
@@ -101,6 +135,10 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
   const totalRidesCount = rides.length;
   const totalTripsCount = trips.length;
   const totalRegistrationsCount = registrations.length;
+  const totalIncome = transactions
+    .filter((t) => t.status === 'paid')
+    .reduce((sum, t) => sum + t.amount, 0);
+  const pendingWireCount = transactions.filter((t) => t.status === 'pending').length;
 
   // Handlers for Ride
   const handleOpenNewRide = () => {
@@ -257,6 +295,34 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
     document.body.removeChild(link);
   };
 
+  const exportTransactionsCsv = () => {
+    const headers = ['ID', 'Date', 'Nom', 'Email', 'Montant_EUR', 'Objet', 'Mode', 'Statut', 'Reference', 'Communication_Structuree'];
+    const rows = transactions.map((t) => [
+      t.id,
+      `"${t.date}"`,
+      `"${t.memberName.replace(/"/g, '""')}"`,
+      t.memberEmail,
+      t.amount,
+      `"${t.description.replace(/"/g, '""')}"`,
+      t.method,
+      t.status,
+      `"${t.reference}"`,
+      `"${t.structuredCommunication || ''}"`,
+    ]);
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `KM0_Paiements_Transactions_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Filtered members
   const filteredMembers = members.filter((m) => {
     if (filterRole !== 'all' && m.role !== filterRole) return false;
@@ -282,6 +348,21 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
         r.title.toLowerCase().includes(q) ||
         r.region.toLowerCase().includes(q) ||
         r.startLocation.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
+  // Filtered transactions
+  const filteredTransactions = transactions.filter((t) => {
+    if (filterPaymentStatus !== 'all' && t.status !== filterPaymentStatus) return false;
+    if (searchTerm) {
+      const q = searchTerm.toLowerCase();
+      return (
+        t.memberName.toLowerCase().includes(q) ||
+        t.memberEmail.toLowerCase().includes(q) ||
+        t.description.toLowerCase().includes(q) ||
+        t.reference.toLowerCase().includes(q)
       );
     }
     return true;
@@ -339,6 +420,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
             { id: 'members', label: 'Membres & Rôles', count: members.length, icon: Users },
             { id: 'tiers', label: 'Abonnements & Tarifs', count: membershipTiers.length, icon: Tag },
             { id: 'mailing', label: 'Mailing List & Newsletters', count: subscribersCount, icon: Mail },
+            { id: 'payments', label: 'Paiements & Stripe', count: transactions.length, icon: CreditCard },
             { id: 'rides', label: 'Activités & Sorties', count: rides.length, icon: Bike },
             { id: 'trips', label: 'Voyages & Stages', count: trips.length, icon: Compass },
             { id: 'registrations', label: 'Inscriptions Reçues', count: registrations.length, icon: UserCheck },
@@ -800,7 +882,355 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 4: RIDES MANAGEMENT (EXISTING PRESERVED) */}
+        {/* TAB 4: PAYMENTS & STRIPE CONFIGURATION */}
+        {/* ========================================================= */}
+        {activeTab === 'payments' && (
+          <div className="space-y-6">
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-5 bg-white rounded-2xl border border-stone-200 shadow-xs">
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-500 block mb-1">
+                  Total Encaissé
+                </span>
+                <div className="font-display text-3xl font-black text-amber-600">
+                  {totalIncome} €
+                </div>
+                <p className="text-xs text-stone-400 mt-1">
+                  {transactions.filter((t) => t.status === 'paid').length} transactions validées
+                </p>
+              </div>
+
+              <div className="p-5 bg-white rounded-2xl border border-stone-200 shadow-xs">
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-500 block mb-1">
+                  Virements en attente
+                </span>
+                <div className={`font-display text-3xl font-black ${pendingWireCount > 0 ? 'text-amber-700' : 'text-stone-900'}`}>
+                  {pendingWireCount}
+                </div>
+                <p className="text-xs text-stone-400 mt-1">
+                  {pendingWireCount > 0 ? 'À valider manuellement' : 'Aucun virement en souffrance'}
+                </p>
+              </div>
+
+              <div className="p-5 bg-white rounded-2xl border border-stone-200 shadow-xs">
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-500 block mb-1">
+                  Passerelle Stripe
+                </span>
+                <div className="font-display text-xl font-black text-stone-900 flex items-center gap-2">
+                  <span className={`w-2.5 h-2.5 rounded-full ${stripeConfig.mode === 'live' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                  <span>{stripeConfig.mode === 'live' ? 'Mode Production' : 'Mode Test Démo'}</span>
+                </div>
+                <p className="text-xs text-stone-400 mt-1">
+                  Apple Pay &amp; Cartes actives
+                </p>
+              </div>
+
+              <div className="p-5 bg-white rounded-2xl border border-stone-200 shadow-xs">
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-500 block mb-1">
+                  Compte Bancaire Belge
+                </span>
+                <div className="font-mono text-sm font-bold text-stone-900 truncate">
+                  {bankConfig.iban}
+                </div>
+                <p className="text-xs text-stone-400 mt-1">
+                  {bankConfig.accountHolder}
+                </p>
+              </div>
+            </div>
+
+            {/* Gateway & Banking Settings Form */}
+            <div className="bg-white rounded-2xl border border-stone-200 p-6 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-stone-100">
+                <div>
+                  <h3 className="font-display text-base font-bold uppercase text-stone-900 flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-amber-600" />
+                    <span>Configuration Passerelle Stripe &amp; Coordonnées Bancaires</span>
+                  </h3>
+                  <p className="text-xs text-stone-500">
+                    Renseignez vos clés API Stripe (compte existant) et le compte du club pour les virements belges sans frais.
+                  </p>
+                </div>
+                {saveSettingsSuccess && (
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Paramètres enregistrés !</span>
+                  </span>
+                )}
+              </div>
+
+              <form onSubmit={handleSavePaymentSettings} className="space-y-6">
+                {/* Stripe Config */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-stone-700">
+                    <CreditCard className="w-4 h-4 text-amber-600" />
+                    <span>Paramètres Stripe</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Mode Stripe
+                      </label>
+                      <select
+                        value={stripeForm.mode}
+                        onChange={(e) =>
+                          setStripeForm({ ...stripeForm, mode: e.target.value as 'test' | 'live' })
+                        }
+                        className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-amber-500"
+                      >
+                        <option value="test">Mode Test (Développement &amp; Essais)</option>
+                        <option value="live">Mode Live (Production Réelle)</option>
+                      </select>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Clé Publique Stripe (Publishable Key)
+                      </label>
+                      <input
+                        type="text"
+                        value={stripeForm.publishableKey}
+                        onChange={(e) =>
+                          setStripeForm({ ...stripeForm, publishableKey: e.target.value })
+                        }
+                        placeholder="pk_test_... ou pk_live_..."
+                        className="w-full px-3 py-2 text-xs font-mono bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Clé Secrète Stripe (Secret Key)
+                      </label>
+                      <input
+                        type="password"
+                        value={stripeForm.secretKey}
+                        onChange={(e) =>
+                          setStripeForm({ ...stripeForm, secretKey: e.target.value })
+                        }
+                        placeholder="sk_test_... ou sk_live_..."
+                        className="w-full px-3 py-2 text-xs font-mono bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-6">
+                      <input
+                        type="checkbox"
+                        id="applePayToggle"
+                        checked={stripeForm.applePayEnabled}
+                        onChange={(e) =>
+                          setStripeForm({ ...stripeForm, applePayEnabled: e.target.checked })
+                        }
+                        className="rounded text-amber-500 border-stone-300"
+                      />
+                      <label htmlFor="applePayToggle" className="text-xs font-semibold text-stone-700">
+                        Activer Apple Pay &amp; Google Pay
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bank Config */}
+                <div className="space-y-4 pt-4 border-t border-stone-100">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-stone-700">
+                    <Building2 className="w-4 h-4 text-stone-800" />
+                    <span>Coordonnées Bancaires Belges (Virements)</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Titulaire du Compte
+                      </label>
+                      <input
+                        type="text"
+                        value={bankForm.accountHolder}
+                        onChange={(e) =>
+                          setBankForm({ ...bankForm, accountHolder: e.target.value })
+                        }
+                        className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        IBAN Club
+                      </label>
+                      <input
+                        type="text"
+                        value={bankForm.iban}
+                        onChange={(e) =>
+                          setBankForm({ ...bankForm, iban: e.target.value })
+                        }
+                        className="w-full px-3 py-2 text-xs font-mono bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        BIC / SWIFT
+                      </label>
+                      <input
+                        type="text"
+                        value={bankForm.bic}
+                        onChange={(e) =>
+                          setBankForm({ ...bankForm, bic: e.target.value })
+                        }
+                        className="w-full px-3 py-2 text-xs font-mono bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-700 mb-1">
+                        Établissement Bancaire
+                      </label>
+                      <input
+                        type="text"
+                        value={bankForm.bankName}
+                        onChange={(e) =>
+                          setBankForm({ ...bankForm, bankName: e.target.value })
+                        }
+                        className="w-full px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:outline-none focus:border-amber-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs transition-all cursor-pointer"
+                  >
+                    Enregistrer les clés &amp; paramètres de paiement
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Transactions Ledger & Table */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-stone-200 shadow-xs">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-3" />
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Rechercher nom, email ou réf..."
+                      className="pl-8 pr-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500 w-64"
+                    />
+                  </div>
+
+                  <select
+                    value={filterPaymentStatus}
+                    onChange={(e) => setFilterPaymentStatus(e.target.value as any)}
+                    className="px-3 py-2 text-xs bg-stone-50 border border-stone-200 rounded-xl text-stone-700 focus:outline-none focus:border-amber-500 font-medium"
+                  >
+                    <option value="all">Tous les statuts ({transactions.length})</option>
+                    <option value="paid">Payé en ligne</option>
+                    <option value="pending">En attente de virement</option>
+                  </select>
+                </div>
+
+                <button
+                  onClick={exportTransactionsCsv}
+                  className="px-4 py-2 text-xs font-semibold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 rounded-xl flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Exporter les transactions (CSV)</span>
+                </button>
+              </div>
+
+              {/* Transactions List */}
+              <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="bg-stone-50 border-b border-stone-200 text-stone-500 font-bold uppercase tracking-wider">
+                        <th className="py-3 px-4">Date &amp; Réf</th>
+                        <th className="py-3 px-4">Adhérent / Payeur</th>
+                        <th className="py-3 px-4">Objet &amp; Destination</th>
+                        <th className="py-3 px-4">Mode</th>
+                        <th className="py-3 px-4">Montant</th>
+                        <th className="py-3 px-4">Statut</th>
+                        <th className="py-3 px-4 text-right">Action Virement</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100">
+                      {filteredTransactions.map((tx) => (
+                        <tr key={tx.id} className="hover:bg-stone-50/70 transition-colors">
+                          <td className="py-3 px-4">
+                            <span className="font-bold text-stone-900 block">{tx.date}</span>
+                            <span className="font-mono text-[11px] text-stone-400 block">{tx.reference}</span>
+                          </td>
+
+                          <td className="py-3 px-4">
+                            <span className="font-bold text-stone-900 block">{tx.memberName}</span>
+                            <span className="text-[11px] text-stone-500">{tx.memberEmail}</span>
+                          </td>
+
+                          <td className="py-3 px-4">
+                            <span className="font-semibold text-stone-800 block">{tx.description}</span>
+                            {tx.structuredCommunication && (
+                              <span className="inline-block mt-0.5 text-[10px] font-mono font-bold bg-amber-50 text-amber-900 px-1.5 py-0.5 rounded border border-amber-200">
+                                Comm: {tx.structuredCommunication}
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-4 capitalize">
+                            <span className="inline-flex items-center gap-1 text-stone-700 font-medium">
+                              {tx.method === 'stripe_card' && <CreditCard className="w-3.5 h-3.5 text-amber-600" />}
+                              {tx.method === 'apple_pay' && <span className="font-bold"> Pay</span>}
+                              {tx.method === 'bancontact' && <Smartphone className="w-3.5 h-3.5 text-blue-600" />}
+                              {tx.method === 'wire_transfer' && <Building2 className="w-3.5 h-3.5 text-stone-600" />}
+                              <span>{tx.method.replace('_', ' ')}</span>
+                            </span>
+                          </td>
+
+                          <td className="py-3 px-4">
+                            <span className="font-black text-sm text-stone-900">{tx.amount} €</span>
+                          </td>
+
+                          <td className="py-3 px-4">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider inline-block ${
+                              tx.status === 'paid'
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            }`}>
+                              {tx.status === 'paid' ? 'Payé' : 'En attente virement'}
+                            </span>
+                          </td>
+
+                          <td className="py-3 px-4 text-right">
+                            {tx.status === 'pending' ? (
+                              <button
+                                onClick={() => confirmWirePayment(tx.id)}
+                                className="px-3 py-1 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors cursor-pointer inline-flex items-center gap-1 shadow-xs"
+                                title="Valider la réception sur le compte bancaire"
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Valider virement</span>
+                              </button>
+                            ) : (
+                              <span className="text-stone-400 text-xs font-medium">✓ Acquitté</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* TAB 5: RIDES MANAGEMENT (EXISTING PRESERVED) */}
         {/* ========================================================= */}
         {activeTab === 'rides' && (
           <div className="space-y-6">

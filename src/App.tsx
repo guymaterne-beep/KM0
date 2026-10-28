@@ -18,18 +18,22 @@ import Footer from './components/Footer';
 
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminLoginModal from './components/admin/AdminLoginModal';
+import { MemberLoginModal } from './components/member/MemberLoginModal';
+import { MemberPortal } from './components/member/MemberPortal';
 
 import { Ride } from './data/rides';
 import { Trip } from './data/trips';
 import { MembershipTier, MEMBERSHIP_TIERS } from './data/club';
-import { Settings, ShieldCheck, ArrowRight, LayoutDashboard } from 'lucide-react';
+import { Settings, ShieldCheck, ArrowRight, LayoutDashboard, UserCheck } from 'lucide-react';
 
 function AppContent() {
-  const { isAdminLoggedIn, adminEmail, membershipTiers } = useApp();
+  const { isAdminLoggedIn, adminEmail, currentMember, membershipTiers } = useApp();
 
-  // Navigation mode: public website vs back-office view
+  // Navigation mode: public website vs back-office view vs member portal
   const [isAdminView, setIsAdminView] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
+  const [isMemberPortalOpen, setIsMemberPortalOpen] = useState(false);
+  const [isMemberLoginOpen, setIsMemberLoginOpen] = useState(false);
 
   // Public modals state
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
@@ -57,9 +61,16 @@ function AppContent() {
     );
   }
 
+  // If Member Portal is active, render full-featured Member Dashboard!
+  if (isMemberPortalOpen) {
+    return (
+      <MemberPortal onClose={() => setIsMemberPortalOpen(false)} />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans selection:bg-amber-400 selection:text-stone-950">
-      {/* Admin Quick Bar when logged in */}
+      {/* Top Banner: Admin Quick Bar when logged in */}
       {isAdminLoggedIn && (
         <div className="bg-amber-400 text-stone-950 px-4 py-2 text-xs font-bold flex items-center justify-between border-b border-amber-500 shadow-xs z-50">
           <div className="flex items-center gap-2">
@@ -71,7 +82,7 @@ function AppContent() {
             className="px-3 py-1 bg-stone-950 text-amber-300 hover:text-white rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer text-[11px] font-extrabold"
           >
             <LayoutDashboard className="w-3.5 h-3.5" />
-            <span>Ouvrir le Back-Office (Éditer Sorties &amp; Voyages)</span>
+            <span>Ouvrir le Back-Office (Éditer Sorties, Abonnements &amp; Paiements)</span>
             <ArrowRight className="w-3 h-3" />
           </button>
         </div>
@@ -83,6 +94,8 @@ function AppContent() {
         onOpenQuiz={() => setIsQuizOpen(true)}
         onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
         onOpenAdminDashboard={() => setIsAdminView(true)}
+        onOpenMemberLogin={() => setIsMemberLoginOpen(true)}
+        onOpenMemberPortal={() => setIsMemberPortalOpen(true)}
       />
 
       {/* Main Content */}
@@ -106,7 +119,7 @@ function AppContent() {
           onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
         />
 
-        {/* Trips & Training Camps with Projet KM0 Switzerland link (Connected to Back-office) */}
+        {/* Trips & Training Camps with Swiss KM0 link (Connected to Back-office) */}
         <TripsSection onSelectTrip={(trip) => setSelectedTrip(trip)} />
 
         {/* Levels Scale (T1-T5 / P1-P5) */}
@@ -134,18 +147,27 @@ function AppContent() {
       <TripDetailModal
         trip={selectedTrip}
         onClose={() => setSelectedTrip(null)}
+        onOpenPortal={() => setIsMemberPortalOpen(true)}
       />
 
       <MembershipModal
         isOpen={!!selectedTier}
         tier={selectedTier}
         onClose={() => setSelectedTier(null)}
+        onOpenPortal={() => setIsMemberPortalOpen(true)}
       />
 
       <LevelQuizModal
         isOpen={isQuizOpen}
         onClose={() => setIsQuizOpen(false)}
         onSelectGroup={() => handleScrollToCalendar()}
+      />
+
+      {/* Member Login Modal */}
+      <MemberLoginModal
+        isOpen={isMemberLoginOpen}
+        onClose={() => setIsMemberLoginOpen(false)}
+        onOpenPortal={() => setIsMemberPortalOpen(true)}
       />
 
       {/* Admin Login Modal */}

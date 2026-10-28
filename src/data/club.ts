@@ -16,6 +16,7 @@ export interface ClubMember {
   firstName: string;
   lastName: string;
   email: string;
+  password?: string;
   phone: string;
   city: string;
   postalCode: string;
@@ -29,6 +30,35 @@ export interface ClubMember {
   subscribedToNewsletter: boolean;
   preferredDiscipline: 'all' | 'vtt' | 'gravel' | 'route';
   notes?: string;
+}
+
+export interface PaymentTransaction {
+  id: string;
+  date: string;
+  memberEmail: string;
+  memberName: string;
+  amount: number;
+  description: string;
+  method: 'stripe_card' | 'apple_pay' | 'wire_transfer' | 'bancontact';
+  status: 'paid' | 'pending' | 'failed';
+  reference: string;
+  targetType: 'membership' | 'ride' | 'trip';
+  targetId: string;
+  structuredCommunication?: string;
+}
+
+export interface StripeConfig {
+  publishableKey: string;
+  secretKey: string;
+  mode: 'test' | 'live';
+  applePayEnabled: boolean;
+}
+
+export interface BankConfig {
+  accountHolder: string;
+  iban: string;
+  bic: string;
+  bankName: string;
 }
 
 export interface SentEmail {
@@ -107,6 +137,7 @@ export const INITIAL_MEMBERS: ClubMember[] = [
     firstName: 'Guy',
     lastName: 'Materne',
     email: 'guymaterne@gmail.com',
+    password: 'belgique2026',
     phone: '+32 470 11 22 33',
     city: 'Wavre',
     postalCode: '1300',
@@ -126,6 +157,7 @@ export const INITIAL_MEMBERS: ClubMember[] = [
     firstName: 'Alexandre',
     lastName: 'De Backer',
     email: 'alex.debacker@skynet.be',
+    password: 'km0belgique',
     phone: '+32 475 22 33 44',
     city: 'Aywaille',
     postalCode: '4920',
@@ -145,6 +177,7 @@ export const INITIAL_MEMBERS: ClubMember[] = [
     firstName: 'Céline',
     lastName: 'Vandenameele',
     email: 'celine.vdm@proximus.be',
+    password: 'km0belgique',
     phone: '+32 486 99 88 77',
     city: 'Louvain-la-Neuve',
     postalCode: '1348',
@@ -164,6 +197,7 @@ export const INITIAL_MEMBERS: ClubMember[] = [
     firstName: 'Julien',
     lastName: 'Renard',
     email: 'j.renard@telenet.be',
+    password: 'km0belgique',
     phone: '+32 494 55 44 33',
     city: 'Liège',
     postalCode: '4000',
@@ -183,6 +217,7 @@ export const INITIAL_MEMBERS: ClubMember[] = [
     firstName: 'Sophie',
     lastName: 'Lemoine',
     email: 'sophie.lemoine@outlook.be',
+    password: 'km0belgique',
     phone: '+32 478 66 11 22',
     city: 'Namur',
     postalCode: '5000',
@@ -202,6 +237,7 @@ export const INITIAL_MEMBERS: ClubMember[] = [
     firstName: 'Marc',
     lastName: 'Dubois',
     email: 'marc.dubois@voo.be',
+    password: 'km0belgique',
     phone: '+32 471 33 55 77',
     city: 'Oudenaarde',
     postalCode: '9700',
@@ -214,7 +250,7 @@ export const INITIAL_MEMBERS: ClubMember[] = [
     jerseySize: 'L',
     subscribedToNewsletter: false,
     preferredDiscipline: 'route',
-    notes: 'En attente de certificat médical de non-contre indication',
+    notes: 'En attente de virement pour valider son adhésion',
   }
 ];
 
@@ -284,3 +320,74 @@ export const PHYSICAL_LEVELS = [
   { level: 4, title: 'Allure Confirmée', distance: '90 - 130 km', dPlus: '1300 - 2200 m', desc: 'Pour cyclistes entraînés, capables d’enchaîner les bosses ardennaises à bon rythme.' },
   { level: 5, title: 'Endurance Ultra', distance: '130 km+', dPlus: '2200 m+', desc: 'Sorties épiques, classiques complètes, brevets et bikepacking longue distance.' }
 ];
+
+export const INITIAL_STRIPE_CONFIG: StripeConfig = {
+  publishableKey: 'pk_test_51KM0BelgiqueCyclingClubPublicStripeKeyDemo2026',
+  secretKey: 'sk_test_51KM0BelgiqueCyclingClubSecretKeyDemo2026',
+  mode: 'test',
+  applePayEnabled: true,
+};
+
+export const INITIAL_BANK_CONFIG: BankConfig = {
+  accountHolder: 'KM0 Belgique ASBL - Guy Materne',
+  iban: 'BE76 0012 3456 7890',
+  bic: 'GEBABEBB',
+  bankName: 'BNP Paribas Fortis Belgique',
+};
+
+export const INITIAL_TRANSACTIONS: PaymentTransaction[] = [
+  {
+    id: 'tx-1001',
+    date: '2026-10-24 15:10',
+    memberEmail: 'p.gilbert@cyclisme.be',
+    memberName: 'Philippe Gilbert',
+    amount: 15,
+    description: 'Participation Sortie VTT Aywaille & Amblève',
+    method: 'stripe_card',
+    status: 'paid',
+    reference: 'ch_3N8kL92eZvKYlo2C0KM0Be01',
+    targetType: 'ride',
+    targetId: 'ride-vtt-aywaille',
+  },
+  {
+    id: 'tx-1002',
+    date: '2026-10-22 11:45',
+    memberEmail: 'sarah.d@skynet.be',
+    memberName: 'Sarah Dumont',
+    amount: 420,
+    description: 'Acompte Voyage Ardennes Epic Bikepacking',
+    method: 'bancontact',
+    status: 'paid',
+    reference: 'bc_8819203912903',
+    targetType: 'trip',
+    targetId: 'trip-ardennes-epic-bikepacking',
+  },
+  {
+    id: 'tx-1003',
+    date: '2026-10-20 09:30',
+    memberEmail: 'marc.dubois@voo.be',
+    memberName: 'Marc Dubois',
+    amount: 160,
+    description: 'Cotisation Membre Club KM0 Belgique (Annuel)',
+    method: 'wire_transfer',
+    status: 'pending',
+    reference: 'VIR-2026-10-20-001',
+    targetType: 'membership',
+    targetId: 'tier-annual',
+    structuredCommunication: '+++104/8921/33492+++',
+  },
+  {
+    id: 'tx-1004',
+    date: '2026-10-18 16:20',
+    memberEmail: 'alex.debacker@skynet.be',
+    memberName: 'Alexandre De Backer',
+    amount: 160,
+    description: 'Renouvellement Adhésion Annuelle Club',
+    method: 'apple_pay',
+    status: 'paid',
+    reference: 'ch_3N8aP202eZvKYlo2C0KM0Be02',
+    targetType: 'membership',
+    targetId: 'tier-annual',
+  }
+];
+
