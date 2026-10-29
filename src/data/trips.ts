@@ -18,6 +18,10 @@ export interface Trip {
   included: string[];
   dailyProgram: { day: string; title: string; desc: string; stats?: string }[];
   tagKm0Partner?: string;
+  gpxFileName?: string;
+  gpxFileSize?: string;
+  gpxData?: string;
+  gpxUploadedAt?: string;
 }
 
 export const TRIPS_DATA: Trip[] = [
@@ -53,7 +57,10 @@ export const TRIPS_DATA: Trip[] = [
       { day: 'Jour 1', title: 'Namur à Bouillon via les forêts profondes', desc: 'Départ des bords de Meuse, traversée des crêtes namuroises et plongée dans la forêt de Bouillon.', stats: '105 km · 1 800m D+' },
       { day: 'Jour 2', title: 'Les Méandres sauvages de la Semois', desc: 'Chemins de halage caillouteux, points de vue vertigineux du Tombeau du Géant et monotraces forestières.', stats: '95 km · 1 950m D+' },
       { day: 'Jour 3', title: 'Le Plateau des Hautes Fagnes et retour triomphal', desc: 'Retour par les chemins de crête avec un finish convivial autour de bières d’abbaye.', stats: '100 km · 1 450m D+' }
-    ]
+    ],
+    gpxFileName: 'trace_km0_ardennes_epic_bikepacking_300k.gpx',
+    gpxFileSize: '112.5 KB',
+    gpxUploadedAt: '2026-10-22 14:00',
   },
   {
     id: 'trip-swiss-prealpes-km0',

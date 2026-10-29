@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Trip } from '../data/trips';
 import { PaymentTransaction } from '../data/club';
-import { X, Calendar, MapPin, Users, CheckCircle2, Shield, Compass, Send, CreditCard, Lock } from 'lucide-react';
+import { X, Calendar, MapPin, Users, CheckCircle2, Shield, Compass, Send, CreditCard, Lock, FileDown } from 'lucide-react';
 import { PaymentCheckoutModal } from './payment/PaymentCheckoutModal';
+import { downloadGpxFile } from '../utils/gpxHelper';
 
 interface TripDetailModalProps {
   trip: Trip | null;
@@ -81,6 +82,14 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
       },
     });
     setSubmitted(true);
+  };
+
+  const handleDownloadGpx = () => {
+    downloadGpxFile(
+      trip.gpxFileName || `KM0-Voyage-${trip.id}.gpx`,
+      trip.gpxData,
+      trip.title
+    );
   };
 
   return (
@@ -203,6 +212,32 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                   Encadrement certifié par des guides officiels KM0 Belgique &amp; Swiss Cycling.
                 </div>
               </div>
+            </div>
+
+            {/* GPX Trace Section */}
+            <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-amber-400/20 text-amber-900 border border-amber-300 flex items-center justify-center font-mono font-bold text-xs shrink-0">
+                  GPX
+                </div>
+                <div>
+                  <span className="font-bold text-xs text-stone-900 block">
+                    {trip.gpxFileName ? `Trace officielle : ${trip.gpxFileName}` : 'Traces GPX exclusives KM0 pour GPS'}
+                  </span>
+                  <span className="text-[11px] text-stone-500">
+                    {trip.gpxFileSize ? `Taille : ${trip.gpxFileSize} · ` : ''}Fichier certifié pour Garmin, Wahoo, Hammerhead, Strava
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleDownloadGpx}
+                className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0"
+              >
+                <FileDown className="w-3.5 h-3.5" />
+                <span>Télécharger la trace GPX</span>
+              </button>
             </div>
 
             {/* Registration Form */}

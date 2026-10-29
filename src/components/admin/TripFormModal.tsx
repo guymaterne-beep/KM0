@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Trip } from '../../data/trips';
-import { X, Compass, Save, MapPin, Calendar, Users, DollarSign } from 'lucide-react';
+import { X, Compass, Save } from 'lucide-react';
+import GpxUploadField from './GpxUploadField';
 
 interface TripFormModalProps {
   isOpen: boolean;
@@ -33,6 +34,10 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
       { day: 'Jour 3', title: 'Finish & Célébration', desc: 'Dernière boucle panoramique et débrief convivial.', stats: '60 km · 900m D+' },
     ] as Trip['dailyProgram'],
     tagKm0Partner: 'Connexion officielle KM0',
+    gpxFileName: '' as string | undefined,
+    gpxFileSize: '' as string | undefined,
+    gpxData: '' as string | undefined,
+    gpxUploadedAt: '' as string | undefined,
   });
 
   const [highlightInput, setHighlightInput] = useState('');
@@ -59,6 +64,10 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
         included: tripToEdit.included || [],
         dailyProgram: tripToEdit.dailyProgram || [],
         tagKm0Partner: tripToEdit.tagKm0Partner || '',
+        gpxFileName: tripToEdit.gpxFileName || '',
+        gpxFileSize: tripToEdit.gpxFileSize || '',
+        gpxData: tripToEdit.gpxData || '',
+        gpxUploadedAt: tripToEdit.gpxUploadedAt || '',
       });
     } else {
       setFormData({
@@ -84,6 +93,10 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
           { day: 'Jour 3', title: 'Finish & Célébration', desc: 'Dernière boucle et repas de clôture avec bières locales.', stats: '60 km · 900m D+' },
         ],
         tagKm0Partner: 'Projet KM0 Belgique',
+        gpxFileName: '',
+        gpxFileSize: '',
+        gpxData: '',
+        gpxUploadedAt: '',
       });
     }
   }, [tripToEdit, isOpen]);
@@ -357,6 +370,30 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
                 ))}
               </div>
             </div>
+          </div>
+
+          {/* GPX File Upload for Trips */}
+          <div className="pt-2">
+            <GpxUploadField
+              fileName={formData.gpxFileName}
+              fileSize={formData.gpxFileSize}
+              gpxData={formData.gpxData}
+              uploadedAt={formData.gpxUploadedAt}
+              defaultTitle={formData.title || 'Voyage Cycliste KM0'}
+              defaultDiscipline={formData.discipline}
+              defaultDistanceKm={formData.durationDays * 85}
+              defaultElevationM={formData.durationDays * 1400}
+              defaultLocation={formData.destination || formData.country}
+              onChange={({ gpxFileName, gpxFileSize, gpxData, gpxUploadedAt }) =>
+                setFormData({
+                  ...formData,
+                  gpxFileName,
+                  gpxFileSize,
+                  gpxData,
+                  gpxUploadedAt,
+                })
+              }
+            />
           </div>
 
           {/* Action buttons */}

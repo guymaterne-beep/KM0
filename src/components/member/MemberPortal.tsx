@@ -18,9 +18,11 @@ import {
   ChevronRight,
   Bike,
   Receipt,
+  FileDown,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ClubMember } from '../../data/club';
+import { downloadGpxFile } from '../../utils/gpxHelper';
 
 interface MemberPortalProps {
   onClose: () => void;
@@ -91,33 +93,8 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
     setTimeout(() => setProfileSuccessMsg(null), 3000);
   };
 
-  const handleDownloadGpx = (rideTitle: string) => {
-    const dummyGpxContent = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="KM0 Belgique Cycling Club" xmlns="http://www.topografix.com/GPX/1/1">
-  <metadata>
-    <name>${rideTitle}</name>
-    <desc>Trace officielle certifiée KM0 Belgique</desc>
-    <author><name>KM0 Belgique - Guy Materne</name></author>
-  </metadata>
-  <trk>
-    <name>${rideTitle}</name>
-    <trkseg>
-      <trkpt lat="50.4892" lon="5.6743"><ele>210</ele></trkpt>
-      <trkpt lat="50.4921" lon="5.6812"><ele>245</ele></trkpt>
-      <trkpt lat="50.5015" lon="5.6980"><ele>320</ele></trkpt>
-      <trkpt lat="50.5120" lon="5.7100"><ele>380</ele></trkpt>
-    </trkseg>
-  </trk>
-</gpx>`;
-    const blob = new Blob([dummyGpxContent], { type: 'application/gpx+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `km0-belgique-${rideTitle.toLowerCase().replace(/[^a-z0-9]/g, '-')}.gpx`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const handleDownloadGpx = (fileName?: string, gpxData?: string, fallbackTitle: string = 'Trace KM0') => {
+    downloadGpxFile(fileName, gpxData, fallbackTitle);
   };
 
   return (
@@ -384,16 +361,17 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
                     </div>
 
                     <div className="pt-4 mt-4 border-t border-stone-100 flex items-center justify-between">
-                      <span className="text-xs text-stone-500 font-medium">
+                      <div className="text-xs text-stone-500 font-medium truncate max-w-[150px]">
                         Guide : {ride.guideName}
-                      </span>
+                      </div>
                       <button
                         type="button"
-                        onClick={() => handleDownloadGpx(ride.title)}
+                        onClick={() => handleDownloadGpx(ride.gpxFileName, ride.gpxData, ride.title)}
                         className="px-3.5 py-1.5 rounded-lg bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold flex items-center gap-1.5 shadow transition-colors cursor-pointer"
+                        title={ride.gpxFileName ? `Télécharger ${ride.gpxFileName}` : 'Télécharger la trace GPX'}
                       >
-                        <Download className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Télécharger GPX</span>
+                        <FileDown className="w-3.5 h-3.5 text-amber-400" />
+                        <span>{ride.gpxFileName ? `Trace ${ride.gpxFileName}` : 'Télécharger GPX'}</span>
                       </button>
                     </div>
                   </div>
@@ -446,21 +424,36 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
                       </div>
                     </div>
 
-                    <div className="pt-4 mt-4 border-t border-stone-100 flex items-center justify-between">
-                      {isRegistered ? (
-                        <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                          <span>Dossier réservé</span>
-                        </span>
-                      ) : (
-                        <span className="text-xs text-stone-500">Groupe : {trip.groupSize}</span>
-                      )}
-                      <button
-                        onClick={onClose}
-                        className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs transition-colors"
-                      >
-                        Voir la fiche séjour
-                      </button>
+                    <div className="pt-4 mt-4 border-t border-stone-100 flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        {isRegistered ? (
+                          <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                            <span>Dossier réservé</span>
+                          </span>
+                        ) : (
+                          <span className="text-xs text-stone-500">Groupe : {trip.groupSize}</span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleDownloadGpx(trip.gpxFileName, trip.gpxData, trip.title)}
+                          className="px-3 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs flex items-center gap-1 transition-colors cursor-pointer"
+                          title="Télécharger la trace GPX du séjour"
+                        >
+                          <FileDown className="w-3.5 h-3.5 text-amber-600" />
+                          <span>Trace GPX</span>
+                        </button>
+
+                        <button
+                          onClick={onClose}
+                          className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs transition-colors cursor-pointer"
+                        >
+                          Fiche séjour
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );

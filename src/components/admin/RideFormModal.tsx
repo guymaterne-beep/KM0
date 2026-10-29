@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Ride } from '../../data/rides';
-import { X, Check, Bike, MapPin, Calendar, Clock, Gauge, Save } from 'lucide-react';
+import { X, Bike, Save } from 'lucide-react';
+import GpxUploadField from './GpxUploadField';
 
 interface RideFormModalProps {
   isOpen: boolean;
@@ -31,6 +32,10 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
     highlights: ['Singletracks forestiers techniques', 'Atelier pilotage à mi-parcours', 'Point de vue panoramique'],
     apresRide: 'Grand bol de soupe chaude et bière locale partagée au clubhouse.',
     elevationProfile: [20, 35, 50, 45, 70, 60, 85, 70, 90, 65, 40, 20],
+    gpxFileName: '' as string | undefined,
+    gpxFileSize: '' as string | undefined,
+    gpxData: '' as string | undefined,
+    gpxUploadedAt: '' as string | undefined,
   });
 
   const [highlightInput, setHighlightInput] = useState('');
@@ -58,6 +63,10 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
         highlights: rideToEdit.highlights || [],
         apresRide: rideToEdit.apresRide,
         elevationProfile: rideToEdit.elevationProfile || [20, 40, 60, 80, 50, 30, 15],
+        gpxFileName: rideToEdit.gpxFileName || '',
+        gpxFileSize: rideToEdit.gpxFileSize || '',
+        gpxData: rideToEdit.gpxData || '',
+        gpxUploadedAt: rideToEdit.gpxUploadedAt || '',
       });
     } else {
       setFormData({
@@ -81,6 +90,10 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
         highlights: ['Singletracks forestiers techniques', 'Atelier pilotage à mi-parcours', 'Pause espresso'],
         apresRide: 'Grand bol de soupe chaude et bière d’abbaye locale partagée.',
         elevationProfile: [20, 35, 55, 45, 75, 60, 90, 70, 50, 30, 20],
+        gpxFileName: '',
+        gpxFileSize: '',
+        gpxData: '',
+        gpxUploadedAt: '',
       });
     }
   }, [rideToEdit, isOpen]);
@@ -429,6 +442,30 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
               onChange={(e) => setFormData({ ...formData, apresRide: e.target.value })}
               placeholder="Ex: Gaufres liégeoises chaudes, dégustation d'une bière locale..."
               className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+            />
+          </div>
+
+          {/* GPX File Upload */}
+          <div className="pt-2">
+            <GpxUploadField
+              fileName={formData.gpxFileName}
+              fileSize={formData.gpxFileSize}
+              gpxData={formData.gpxData}
+              uploadedAt={formData.gpxUploadedAt}
+              defaultTitle={formData.title || 'Sortie Cycliste KM0'}
+              defaultDiscipline={formData.discipline}
+              defaultDistanceKm={formData.distanceKm}
+              defaultElevationM={formData.elevationM}
+              defaultLocation={formData.startLocation || formData.region}
+              onChange={({ gpxFileName, gpxFileSize, gpxData, gpxUploadedAt }) =>
+                setFormData({
+                  ...formData,
+                  gpxFileName,
+                  gpxFileSize,
+                  gpxData,
+                  gpxUploadedAt,
+                })
+              }
             />
           </div>
 

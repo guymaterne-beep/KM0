@@ -195,6 +195,15 @@ export default function RideCalendar({ onSelectRide, onOpenAdminLogin }: RideCal
                         <span className="text-stone-500 font-medium text-[11px]">
                           {ride.region}
                         </span>
+                        {ride.gpxFileName && (
+                          <span
+                            className="font-mono text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-200 flex items-center gap-1"
+                            title="Trace GPX officielle uploadée par le club"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                            GPX
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex items-center gap-2 font-mono text-[11px] text-stone-500 font-semibold">

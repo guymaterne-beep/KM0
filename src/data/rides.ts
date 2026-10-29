@@ -22,6 +22,10 @@ export interface Ride {
   apresRide: string;
   elevationProfile: number[]; // normalized 0-100 values
   featured?: boolean;
+  gpxFileName?: string;
+  gpxFileSize?: string;
+  gpxData?: string;
+  gpxUploadedAt?: string;
 }
 
 export const RIDES_DATA: Ride[] = [
@@ -53,6 +57,9 @@ export const RIDES_DATA: Ride[] = [
     apresRide: 'Grand bol de potage à l’oignon chaud & dégustation d’Elfique locale au café des cyclistes.',
     elevationProfile: [15, 22, 45, 60, 52, 78, 65, 88, 70, 95, 75, 50, 40, 65, 30, 15],
     featured: true,
+    gpxFileName: 'trace_km0_vtt_aywaille_46k.gpx',
+    gpxFileSize: '24.2 KB',
+    gpxUploadedAt: '2026-10-24 10:15',
   },
   {
     id: 'ride-vtt-meerdaal',
@@ -82,6 +89,8 @@ export const RIDES_DATA: Ride[] = [
     apresRide: 'Gaufres liégeoises chaudes, café torréfié au clubhouse et bière de Waterloo.',
     elevationProfile: [20, 30, 45, 35, 60, 40, 55, 30, 50, 42, 60, 35, 25, 20],
     featured: false,
+    gpxFileName: 'trace_km0_meerdaal_vtt_52km.gpx',
+    gpxFileSize: '28.1 KB',
   },
   {
     id: 'ride-vtt-botrange',
@@ -111,6 +120,8 @@ export const RIDES_DATA: Ride[] = [
     apresRide: 'Feu de bois dans la taverne d’altitude, vin chaud aux épices et assiette ardennaise.',
     elevationProfile: [40, 55, 70, 85, 92, 100, 88, 75, 80, 70, 60, 45, 40],
     featured: true,
+    gpxFileName: 'trace_km0_botrange_fagnes_42km.gpx',
+    gpxFileSize: '22.8 KB',
   },
   {
     id: 'ride-gravel-brabant',
@@ -140,6 +151,8 @@ export const RIDES_DATA: Ride[] = [
     apresRide: 'Terrasse ensoleillée, planche de fromages d’abbaye et bières de ferme.',
     elevationProfile: [10, 25, 40, 30, 55, 45, 70, 50, 65, 40, 30, 15],
     featured: true,
+    gpxFileName: 'trace_km0_gravel_brabanconne_78km.gpx',
+    gpxFileSize: '39.4 KB',
   },
   {
     id: 'ride-gravel-herve',

@@ -4,6 +4,7 @@ import { Ride } from '../data/rides';
 import { PaymentTransaction } from '../data/club';
 import { X, Calendar, Clock, MapPin, Gauge, CheckCircle2, User, FileDown, Share2, Check, Lock, CreditCard } from 'lucide-react';
 import { PaymentCheckoutModal } from './payment/PaymentCheckoutModal';
+import { downloadGpxFile } from '../utils/gpxHelper';
 
 interface RideDetailModalProps {
   ride: Ride | null;
@@ -108,26 +109,11 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
   };
 
   const handleDownloadGpx = () => {
-    const fakeGpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Projet KM0 Belgique - https://projet-km0.ch">
-  <metadata>
-    <name>${ride.title}</name>
-    <desc>Trace officielle certifiée Projet KM0 Belgique - ${ride.distanceKm}km / ${ride.elevationM}m D+</desc>
-  </metadata>
-  <trk>
-    <name>${ride.title}</name>
-    <type>${ride.discipline.toUpperCase()}</type>
-  </trk>
-</gpx>`;
-    const blob = new Blob([fakeGpx], { type: 'application/gpx+xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `KM0-Belgique-${ride.id}.gpx`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    downloadGpxFile(
+      ride.gpxFileName,
+      ride.gpxData,
+      ride.title
+    );
   };
 
   // SVG elevation profile calculation
@@ -231,19 +217,29 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
 
           {/* Elevation Profile Graphic */}
           <div className="p-5 rounded-2xl bg-stone-50 border border-stone-200">
-            <div className="flex items-center justify-between mb-3 text-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 text-xs">
               <div className="flex items-center gap-2">
                 <Gauge className="w-4 h-4 text-amber-600" />
                 <span className="font-bold text-stone-900 uppercase tracking-wider">
                   Profil Altimétrique &amp; Relief
                 </span>
+                {ride.gpxFileName && (
+                  <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+                    GPX certifié
+                  </span>
+                )}
               </div>
               <button
                 onClick={handleDownloadGpx}
-                className="text-amber-700 hover:text-amber-800 font-bold flex items-center gap-1 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold transition-all shadow-xs cursor-pointer text-xs"
+                title={ride.gpxFileName ? `Télécharger ${ride.gpxFileName}` : 'Télécharger la trace GPX'}
               >
-                <FileDown className="w-3.5 h-3.5" />
-                <span>Télécharger la trace GPX</span>
+                <FileDown className="w-3.5 h-3.5 text-stone-950" />
+                <span>
+                  {ride.gpxFileName
+                    ? `Télécharger ${ride.gpxFileName} (${ride.gpxFileSize || 'GPX'})`
+                    : 'Télécharger la trace GPX officielle'}
+                </span>
               </button>
             </div>
 

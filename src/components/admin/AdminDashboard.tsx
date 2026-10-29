@@ -39,7 +39,9 @@ import {
   Smartphone,
   ExternalLink,
   Receipt,
+  FileDown,
 } from 'lucide-react';
+import { downloadGpxFile } from '../../utils/gpxHelper';
 
 interface AdminDashboardProps {
   onBackToSite: () => void;
@@ -1278,6 +1280,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                       <th className="py-3 px-4">Date &amp; Heure</th>
                       <th className="py-3 px-4">Distance &amp; D+</th>
                       <th className="py-3 px-4">Région &amp; Départ</th>
+                      <th className="py-3 px-4">Trace GPX</th>
                       <th className="py-3 px-4">Inscrits</th>
                       <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
@@ -1320,12 +1323,41 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                           <div className="text-[11px] text-stone-400 truncate">{ride.startLocation}</div>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
+                          {ride.gpxFileName ? (
+                            <button
+                              onClick={() => downloadGpxFile(ride.gpxFileName, ride.gpxData, ride.title)}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors cursor-pointer group"
+                              title={`Télécharger ${ride.gpxFileName} (${ride.gpxFileSize || 'GPX'})`}
+                            >
+                              <FileDown className="w-3.5 h-3.5 text-amber-700 group-hover:scale-110 transition-transform" />
+                              <span className="max-w-[120px] truncate">{ride.gpxFileName}</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleEditRide(ride)}
+                              className="text-[11px] text-stone-400 hover:text-amber-700 font-medium underline cursor-pointer"
+                              title="Ajouter une trace GPX"
+                            >
+                              + Ajouter GPX
+                            </button>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 whitespace-nowrap">
                           <div className="flex items-center gap-1.5 font-bold text-stone-900">
                             {ride.registeredCount} / {ride.maxParticipants}
                           </div>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap text-right">
                           <div className="flex items-center justify-end gap-1">
+                            {ride.gpxFileName && (
+                              <button
+                                onClick={() => downloadGpxFile(ride.gpxFileName, ride.gpxData, ride.title)}
+                                className="p-1.5 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors cursor-pointer"
+                                title="Télécharger le fichier GPX"
+                              >
+                                <FileDown className="w-4 h-4 text-amber-600" />
+                              </button>
+                            )}
                             <button
                               onClick={() => handleEditRide(ride)}
                               className="p-1.5 text-stone-500 hover:text-amber-700 hover:bg-amber-100 rounded-lg transition-colors cursor-pointer"
@@ -1402,8 +1434,33 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                     <p className="text-xs text-amber-700 font-medium mb-3">
                       {trip.subtitle}
                     </p>
-                    <div className="text-sm font-bold text-amber-600 font-mono mb-2">
+                    <div className="text-sm font-bold text-amber-600 font-mono mb-3">
                       {trip.priceEuro} € · {trip.dates}
+                    </div>
+
+                    <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
+                      {trip.gpxFileName ? (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => downloadGpxFile(trip.gpxFileName, trip.gpxData, trip.title)}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 transition-colors cursor-pointer"
+                            title={`Télécharger ${trip.gpxFileName}`}
+                          >
+                            <FileDown className="w-3.5 h-3.5 text-amber-700" />
+                            <span className="max-w-[140px] truncate">{trip.gpxFileName}</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleEditTrip(trip)}
+                          className="text-[11px] text-stone-400 hover:text-amber-700 font-medium underline cursor-pointer"
+                        >
+                          + Uploader trace GPX
+                        </button>
+                      )}
+                      <span className="text-[11px] text-stone-400 font-medium">
+                        {trip.guide}
+                      </span>
                     </div>
                   </div>
                 </div>
