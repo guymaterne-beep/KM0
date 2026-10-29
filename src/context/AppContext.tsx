@@ -185,11 +185,86 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           email: 'p.gilbert@cyclisme.be',
           phone: '+32 472 12 34 56',
           dateCreated: '2026-10-24 14:30',
-          details: { paceGroup: 'sport', bikeModel: 'BMC Fourstroke 2.35' },
+          details: { paceGroup: 'sport', bikeModel: 'BMC Fourstroke 2.35', notes: 'Prêt pour les passages techniques' },
           status: 'confirmé',
           amountPaid: 15,
           paymentMethod: 'stripe_card',
           paymentId: 'tx-1001',
+        },
+        {
+          id: 'reg-004',
+          type: 'ride',
+          targetId: 'ride-vtt-aywaille',
+          targetTitle: 'La Ronde des Bois d’Aywaille & Amblève',
+          name: 'Benoît Poelvoorde',
+          email: 'b.poelvoorde@belgique.be',
+          phone: '+32 473 44 55 66',
+          dateCreated: '2026-10-25 11:20',
+          details: { paceGroup: 'sport', bikeModel: 'Specialized Epic Expert', notes: 'Grand amateur de potage ardennais' },
+          status: 'confirmé',
+          amountPaid: 15,
+          paymentMethod: 'bancontact',
+          paymentId: 'tx-1005',
+        },
+        {
+          id: 'reg-005',
+          type: 'ride',
+          targetId: 'ride-vtt-aywaille',
+          targetTitle: 'La Ronde des Bois d’Aywaille & Amblève',
+          name: 'Sarah Dumont',
+          email: 'sarah.d@skynet.be',
+          phone: '+32 495 88 77 66',
+          dateCreated: '2026-10-26 14:10',
+          details: { paceGroup: 'inter', bikeModel: 'Canyon Lux Trail', notes: 'Végétarienne pour le ravito' },
+          status: 'confirmé',
+          amountPaid: 15,
+          paymentMethod: 'stripe_card',
+          paymentId: 'tx-1006',
+        },
+        {
+          id: 'reg-006',
+          type: 'ride',
+          targetId: 'ride-vtt-aywaille',
+          targetTitle: 'La Ronde des Bois d’Aywaille & Amblève',
+          name: 'Émilie De Cock',
+          email: 'emilie.decock@gent.be',
+          phone: '+32 496 11 22 33',
+          dateCreated: '2026-10-27 16:45',
+          details: { paceGroup: 'sport', bikeModel: 'Trek Supercaliber 9.8', notes: 'Capitaine de route Flandres' },
+          status: 'confirmé',
+          amountPaid: 0,
+          paymentMethod: 'club_membership',
+          paymentId: 'tx-1007',
+        },
+        {
+          id: 'reg-007',
+          type: 'ride',
+          targetId: 'ride-vtt-meerdaal',
+          targetTitle: 'L’Hivernale des Sentiers de Meerdaal & Terrils',
+          name: 'Thomas Meunier',
+          email: 't.meunier@ardennes.be',
+          phone: '+32 475 99 88 77',
+          dateCreated: '2026-10-27 10:00',
+          details: { paceGroup: 'sport', bikeModel: 'Scott Spark RC', notes: 'Arrive en train à Ottignies' },
+          status: 'confirmé',
+          amountPaid: 15,
+          paymentMethod: 'bancontact',
+          paymentId: 'tx-1008',
+        },
+        {
+          id: 'reg-008',
+          type: 'ride',
+          targetId: 'ride-vtt-botrange',
+          targetTitle: 'Le Défi Fagnes Givré - Signal de Botrange',
+          name: 'Julien Renard',
+          email: 'j.renard@telenet.be',
+          phone: '+32 494 55 44 33',
+          dateCreated: '2026-10-28 08:30',
+          details: { paceGroup: 'sport', bikeModel: 'Orbea Oiz M-Team', notes: 'Pneus cloutés / thermo-veste' },
+          status: 'confirmé',
+          amountPaid: 15,
+          paymentMethod: 'stripe_card',
+          paymentId: 'tx-1009',
         },
         {
           id: 'reg-002',
@@ -629,6 +704,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const deleteRegistration = (id: string) => {
+    const target = registrations.find((r) => r.id === id);
+    if (target && target.type === 'ride') {
+      setRides((prev) =>
+        prev.map((ride) =>
+          ride.id === target.targetId
+            ? { ...ride, registeredCount: Math.max(0, ride.registeredCount - 1) }
+            : ride
+        )
+      );
+    }
     setRegistrations((prev) => prev.filter((r) => r.id !== id));
   };
 

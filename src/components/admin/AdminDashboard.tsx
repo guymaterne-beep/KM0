@@ -9,11 +9,13 @@ import TripFormModal from './TripFormModal';
 import MemberFormModal from './MemberFormModal';
 import TierFormModal from './TierFormModal';
 import EmailComposerModal from './EmailComposerModal';
+import RideAttendeesModal from './RideAttendeesModal';
 
 import {
   Bike,
   Compass,
   Users,
+  Eye,
   Calendar,
   Plus,
   Edit2,
@@ -69,6 +71,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
     addTrip,
     updateTrip,
     deleteTrip,
+    addRegistration,
     updateRegistrationStatus,
     deleteRegistration,
     addMember,
@@ -89,6 +92,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
   // Modals state
   const [isRideModalOpen, setIsRideModalOpen] = useState(false);
   const [rideToEdit, setRideToEdit] = useState<Ride | null>(null);
+  const [selectedRideForAttendees, setSelectedRideForAttendees] = useState<Ride | null>(null);
 
   const [isTripModalOpen, setIsTripModalOpen] = useState(false);
   const [tripToEdit, setTripToEdit] = useState<Trip | null>(null);
@@ -1281,7 +1285,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                       <th className="py-3 px-4">Distance &amp; D+</th>
                       <th className="py-3 px-4">Région &amp; Départ</th>
                       <th className="py-3 px-4">Trace GPX</th>
-                      <th className="py-3 px-4">Inscrits</th>
+                      <th className="py-3 px-4">Inscrits (Privé)</th>
                       <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -1343,12 +1347,27 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                           )}
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
-                          <div className="flex items-center gap-1.5 font-bold text-stone-900">
-                            {ride.registeredCount} / {ride.maxParticipants}
-                          </div>
+                          <button
+                            onClick={() => setSelectedRideForAttendees(ride)}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 hover:bg-amber-100 text-stone-900 border border-amber-300 transition-all cursor-pointer shadow-xs group"
+                            title="Consulter et gérer la liste privée des participants inscrits"
+                          >
+                            <Users className="w-3.5 h-3.5 text-amber-700 group-hover:scale-110 transition-transform" />
+                            <span>
+                              {ride.registeredCount} / {ride.maxParticipants}
+                            </span>
+                            <Eye className="w-3.5 h-3.5 text-amber-600 opacity-70 group-hover:opacity-100" />
+                          </button>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap text-right">
                           <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => setSelectedRideForAttendees(ride)}
+                              className="p-1.5 text-amber-700 hover:text-amber-900 hover:bg-amber-100/70 rounded-lg transition-colors cursor-pointer"
+                              title="Voir la liste privée des inscrits"
+                            >
+                              <Users className="w-4 h-4" />
+                            </button>
                             {ride.gpxFileName && (
                               <button
                                 onClick={() => downloadGpxFile(ride.gpxFileName, ride.gpxData, ride.title)}
@@ -1437,6 +1456,25 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                     <div className="text-sm font-bold text-amber-600 font-mono mb-3">
                       {trip.priceEuro} € · {trip.dates}
                     </div>
+
+                    {(() => {
+                      const tripRegs = registrations.filter((r) => r.type === 'trip' && r.targetId === trip.id);
+                      return (
+                        <div className="mb-3 flex items-center justify-between text-xs">
+                          <button
+                            onClick={() => {
+                              setActiveTab('registrations');
+                            }}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-bold bg-amber-50 hover:bg-amber-100 text-stone-900 border border-amber-300 transition-colors cursor-pointer text-[11px]"
+                            title="Voir les inscriptions pour ce voyage"
+                          >
+                            <Users className="w-3 h-3 text-amber-700" />
+                            <span>{tripRegs.length} inscrit(s)</span>
+                          </button>
+                          <span className="text-stone-400 text-[11px] font-mono">{trip.groupSize}</span>
+                        </div>
+                      );
+                    })()}
 
                     <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
                       {trip.gpxFileName ? (
@@ -1602,6 +1640,17 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
       <EmailComposerModal
         isOpen={isEmailModalOpen}
         onClose={() => setIsEmailModalOpen(false)}
+      />
+
+      <RideAttendeesModal
+        isOpen={Boolean(selectedRideForAttendees)}
+        ride={selectedRideForAttendees}
+        onClose={() => setSelectedRideForAttendees(null)}
+        registrations={registrations}
+        members={members}
+        onUpdateRegistrationStatus={updateRegistrationStatus}
+        onDeleteRegistration={deleteRegistration}
+        onAddManualRegistration={(reg) => addRegistration(reg)}
       />
     </div>
   );

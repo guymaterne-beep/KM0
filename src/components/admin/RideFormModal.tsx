@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Ride } from '../../data/rides';
-import { X, Bike, Save } from 'lucide-react';
+import { X, Bike, Save, CheckCircle2 } from 'lucide-react';
 import GpxUploadField from './GpxUploadField';
 
 interface RideFormModalProps {
@@ -39,6 +39,7 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
   });
 
   const [highlightInput, setHighlightInput] = useState('');
+  const [gpxSyncNotice, setGpxSyncNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (rideToEdit) {
@@ -446,7 +447,23 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
           </div>
 
           {/* GPX File Upload */}
-          <div className="pt-2">
+          <div className="pt-2 space-y-2">
+            {gpxSyncNotice && (
+              <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs flex items-center justify-between gap-2 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span className="font-semibold">{gpxSyncNotice}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGpxSyncNotice(null)}
+                  className="text-emerald-700 hover:text-emerald-950 font-bold px-1.5"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
             <GpxUploadField
               fileName={formData.gpxFileName}
               fileSize={formData.gpxFileSize}
@@ -458,14 +475,25 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
               defaultElevationM={formData.elevationM}
               defaultLocation={formData.startLocation || formData.region}
               onChange={({ gpxFileName, gpxFileSize, gpxData, gpxUploadedAt }) =>
-                setFormData({
-                  ...formData,
+                setFormData((prev) => ({
+                  ...prev,
                   gpxFileName,
                   gpxFileSize,
                   gpxData,
                   gpxUploadedAt,
-                })
+                }))
               }
+              onExtractProfile={(extracted) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  elevationProfile: extracted.elevationProfile,
+                  elevationM: extracted.elevationM > 0 ? extracted.elevationM : prev.elevationM,
+                  distanceKm: extracted.distanceKm > 0 ? extracted.distanceKm : prev.distanceKm,
+                }));
+                setGpxSyncNotice(
+                  `Profil altimétrique extrait et appliqué : +${extracted.elevationM}m D+, ${extracted.distanceKm} km (${extracted.pointCount} points GPS analysés)`
+                );
+              }}
             />
           </div>
 

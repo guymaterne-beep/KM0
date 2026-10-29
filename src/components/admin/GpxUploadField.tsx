@@ -1,6 +1,25 @@
-import React, { useState, useRef } from 'react';
-import { UploadCloud, FileDown, CheckCircle2, Trash2, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
-import { formatFileSize, validateGpxContent, downloadGpxFile, generateSampleGpx } from '../../utils/gpxHelper';
+import React, { useState, useRef, useMemo } from 'react';
+import {
+  UploadCloud,
+  FileDown,
+  CheckCircle2,
+  Trash2,
+  RefreshCw,
+  AlertCircle,
+  Sparkles,
+  TrendingUp,
+  Gauge,
+  Check,
+  Milestone,
+} from 'lucide-react';
+import {
+  formatFileSize,
+  validateGpxContent,
+  downloadGpxFile,
+  generateSampleGpx,
+  extractElevationProfileFromGpx,
+  GpxProfileExtraction,
+} from '../../utils/gpxHelper';
 
 interface GpxUploadFieldProps {
   fileName?: string;
@@ -13,6 +32,7 @@ interface GpxUploadFieldProps {
     gpxData?: string;
     gpxUploadedAt?: string;
   }) => void;
+  onExtractProfile?: (extracted: GpxProfileExtraction) => void;
   // Metadata used if admin chooses to auto-generate sample GPX
   defaultTitle?: string;
   defaultDiscipline?: string;
@@ -27,6 +47,7 @@ export default function GpxUploadField({
   gpxData,
   uploadedAt,
   onChange,
+  onExtractProfile,
   defaultTitle = 'Sortie KM0 Belgique',
   defaultDiscipline = 'gravel',
   defaultDistanceKm = 50,
@@ -35,10 +56,19 @@ export default function GpxUploadField({
 }: GpxUploadFieldProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [hasAppliedProfile, setHasAppliedProfile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Compute elevation profile extraction whenever gpxData is present
+  const extractedProfile = useMemo<GpxProfileExtraction | null>(() => {
+    if (!gpxData || gpxData.trim().length < 20) return null;
+    const res = extractElevationProfileFromGpx(gpxData);
+    return res.valid ? res : null;
+  }, [gpxData]);
 
   const handleFileProcess = (file: File) => {
     setErrorMessage(null);
+    setHasAppliedProfile(false);
 
     if (!file.name.toLowerCase().endsWith('.gpx') && !file.type.includes('gpx') && !file.type.includes('xml')) {
       setErrorMessage('Veuillez sélectionner un fichier avec l’extension .gpx');
@@ -68,6 +98,15 @@ export default function GpxUploadField({
         gpxData: content,
         gpxUploadedAt: dateFormatted,
       });
+
+      // Auto-extract profile directly on load if callback provided
+      if (onExtractProfile) {
+        const extracted = extractElevationProfileFromGpx(content);
+        if (extracted.valid) {
+          onExtractProfile(extracted);
+          setHasAppliedProfile(true);
+        }
+      }
     };
 
     reader.onerror = () => {
@@ -102,6 +141,7 @@ export default function GpxUploadField({
   };
 
   const handleRemove = () => {
+    setHasAppliedProfile(false);
     onChange({
       gpxFileName: undefined,
       gpxFileSize: undefined,
@@ -135,6 +175,21 @@ export default function GpxUploadField({
       gpxData: generatedContent,
       gpxUploadedAt: dateFormatted,
     });
+
+    // Auto extract profile from generated sample
+    if (onExtractProfile) {
+      const extracted = extractElevationProfileFromGpx(generatedContent);
+      if (extracted.valid) {
+        onExtractProfile(extracted);
+        setHasAppliedProfile(true);
+      }
+    }
+  };
+
+  const handleApplyProfileClick = () => {
+    if (!extractedProfile || !onExtractProfile) return;
+    onExtractProfile(extractedProfile);
+    setHasAppliedProfile(true);
   };
 
   const handleTestDownload = () => {
@@ -143,16 +198,33 @@ export default function GpxUploadField({
 
   const hasFile = Boolean(fileName);
 
+  // Mini SVG points for extracted elevation preview
+  const previewSvg = useMemo(() => {
+    if (!extractedProfile || extractedProfile.elevationProfile.length === 0) return null;
+    const prof = extractedProfile.elevationProfile;
+    const width = 360;
+    const height = 80;
+    const polyline = prof
+      .map((val, idx) => {
+        const x = (idx / (prof.length - 1)) * width;
+        const y = height - (val / 100) * (height - 10) - 5;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(' ');
+    const area = `0,${height} ${polyline} ${width},${height}`;
+    return { polyline, area };
+  }, [extractedProfile]);
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <label className="block text-xs font-bold uppercase tracking-wider text-stone-700">
-          Trace GPX Officielle à télécharger
+          Trace GPX &amp; Profil Altimétrique
         </label>
         {hasFile && (
           <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3" />
-            <span>Fichier prêt pour les adhérents</span>
+            <span>Fichier GPX lié à la sortie</span>
           </span>
         )}
       </div>
@@ -173,54 +245,155 @@ export default function GpxUploadField({
       )}
 
       {hasFile ? (
-        <div className="p-4 bg-amber-50/40 rounded-xl border border-amber-300/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-800 flex items-center justify-center shrink-0 border border-amber-300">
-              <span className="font-mono text-xs font-black">GPX</span>
+        <div className="space-y-3">
+          {/* File Card */}
+          <div className="p-4 bg-amber-50/40 rounded-xl border border-amber-300/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-800 flex items-center justify-center shrink-0 border border-amber-300">
+                <span className="font-mono text-xs font-black">GPX</span>
+              </div>
+              <div className="min-w-0">
+                <div className="font-bold text-xs sm:text-sm text-stone-900 truncate">
+                  {fileName}
+                </div>
+                <div className="text-[11px] text-stone-500 flex items-center gap-2">
+                  <span>{fileSize || 'Taille non renseignée'}</span>
+                  {uploadedAt && (
+                    <>
+                      <span>•</span>
+                      <span>Ajouté le {uploadedAt}</span>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="min-w-0">
-              <div className="font-bold text-xs sm:text-sm text-stone-900 truncate">
-                {fileName}
-              </div>
-              <div className="text-[11px] text-stone-500 flex items-center gap-2">
-                <span>{fileSize || 'Taille non renseignée'}</span>
-                {uploadedAt && (
-                  <>
-                    <span>•</span>
-                    <span>Ajouté le {uploadedAt}</span>
-                  </>
-                )}
-              </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleTestDownload}
+                className="px-3 py-1.5 text-xs font-bold bg-white text-stone-800 hover:bg-stone-50 border border-stone-300 rounded-lg shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="Tester le téléchargement du fichier"
+              >
+                <FileDown className="w-3.5 h-3.5 text-amber-600" />
+                <span>Tester téléchargement</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="p-1.5 text-stone-600 hover:text-stone-900 hover:bg-stone-200/60 rounded-lg transition-colors cursor-pointer"
+                title="Remplacer par un autre fichier GPX"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleRemove}
+                className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                title="Supprimer la trace GPX"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={handleTestDownload}
-              className="px-3 py-1.5 text-xs font-bold bg-white text-stone-800 hover:bg-stone-50 border border-stone-300 rounded-lg shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
-              title="Tester le téléchargement du fichier"
-            >
-              <FileDown className="w-3.5 h-3.5 text-amber-600" />
-              <span>Tester téléchargement</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="p-1.5 text-stone-600 hover:text-stone-900 hover:bg-stone-200/60 rounded-lg transition-colors cursor-pointer"
-              title="Remplacer par un autre fichier GPX"
-            >
-              <RefreshCw className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={handleRemove}
-              className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-              title="Supprimer la trace GPX"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Elevation Profile Generation Panel */}
+          {extractedProfile && (
+            <div className="p-4 bg-white rounded-xl border border-stone-200 shadow-xs space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800">
+                    <TrendingUp className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-stone-900 uppercase tracking-wider">
+                      Profil altimétrique extrait du GPX
+                    </h4>
+                    <p className="text-[11px] text-stone-500">
+                      Généré à partir de {extractedProfile.pointCount} coordonnées GPS réelles
+                    </p>
+                  </div>
+                </div>
+
+                {onExtractProfile && (
+                  <button
+                    type="button"
+                    onClick={handleApplyProfileClick}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all flex items-center gap-1.5 cursor-pointer ${
+                      hasAppliedProfile
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                        : 'bg-amber-400 hover:bg-amber-300 text-stone-950 border-amber-500 shadow-xs'
+                    }`}
+                  >
+                    {hasAppliedProfile ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>Profil synchronisé avec la sortie</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Générer &amp; appliquer le profil au formulaire</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* Stats badges extracted from GPX */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center">
+                <div className="p-2 rounded-lg bg-stone-50 border border-stone-200">
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">Dénivelé D+</span>
+                  <span className="text-sm font-extrabold text-amber-700 font-mono">
+                    +{extractedProfile.elevationM} m
+                  </span>
+                </div>
+                <div className="p-2 rounded-lg bg-stone-50 border border-stone-200">
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">Distance GPX</span>
+                  <span className="text-sm font-extrabold text-stone-900 font-mono">
+                    {extractedProfile.distanceKm} km
+                  </span>
+                </div>
+                <div className="p-2 rounded-lg bg-stone-50 border border-stone-200">
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">Alt. Min / Max</span>
+                  <span className="text-xs font-bold text-stone-800 font-mono">
+                    {extractedProfile.minElevationM}m / {extractedProfile.maxElevationM}m
+                  </span>
+                </div>
+                <div className="p-2 rounded-lg bg-stone-50 border border-stone-200">
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">D- (Descente)</span>
+                  <span className="text-xs font-bold text-stone-600 font-mono">
+                    -{extractedProfile.elevationLossM} m
+                  </span>
+                </div>
+              </div>
+
+              {/* Graphic curve SVG */}
+              {previewSvg && (
+                <div className="w-full h-20 bg-stone-50 rounded-lg p-2 border border-stone-200 relative overflow-hidden">
+                  <svg viewBox="0 0 360 80" className="w-full h-full" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="gpxCurveGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.35" />
+                        <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.05" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="0" y1="20" x2="360" y2="20" stroke="#e5e7eb" strokeDasharray="3 3" />
+                    <line x1="0" y1="40" x2="360" y2="40" stroke="#e5e7eb" strokeDasharray="3 3" />
+                    <line x1="0" y1="60" x2="360" y2="60" stroke="#e5e7eb" strokeDasharray="3 3" />
+                    <polygon points={previewSvg.area} fill="url(#gpxCurveGradient)" />
+                    <polyline points={previewSvg.polyline} fill="none" stroke="#d97706" strokeWidth="2.5" />
+                  </svg>
+                  <div className="absolute left-2.5 bottom-1 text-[9px] text-stone-500 font-mono">
+                    Départ : {extractedProfile.minElevationM}m
+                  </div>
+                  <div className="absolute right-2.5 bottom-1 text-[9px] text-stone-500 font-mono">
+                    Sommet : {extractedProfile.maxElevationM}m
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       ) : (
         <div
@@ -239,7 +412,7 @@ export default function GpxUploadField({
             Glissez-déposez votre fichier GPX ici, ou <span className="text-amber-700 underline">parcourez vos dossiers</span>
           </p>
           <p className="text-[11px] text-stone-500 max-w-sm mx-auto mb-3">
-            Fichier .gpx officiel compatible avec GPS Garmin, Wahoo, Hammerhead, Karoo, Strava et Komoot.
+            Fichier .gpx officiel. L'altimétrie et le profil de dénivelé seront calculés automatiquement.
           </p>
 
           <div className="pt-2 border-t border-stone-200/80 inline-block" onClick={(e) => e.stopPropagation()}>
@@ -249,7 +422,7 @@ export default function GpxUploadField({
               className="px-3.5 py-1.5 text-xs font-semibold bg-white hover:bg-stone-50 text-stone-700 border border-stone-300 rounded-lg shadow-xs flex items-center gap-1.5 mx-auto transition-colors cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>Générer automatiquement une trace modèle KM0 pour cette sortie</span>
+              <span>Générer automatiquement une trace &amp; profil modèle KM0 pour cette sortie</span>
             </button>
           </div>
         </div>
