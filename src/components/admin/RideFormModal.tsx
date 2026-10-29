@@ -266,16 +266,23 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                Dénivelé D+ (m)
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-bold uppercase tracking-wider text-stone-700">
+                  Dénivelé D+ (m) *
+                </label>
+                <span className="text-[10px] text-amber-800 font-bold bg-amber-100 px-1.5 py-0.5 rounded">
+                  Manuel
+                </span>
+              </div>
               <input
                 type="number"
                 required
                 value={formData.elevationM}
                 onChange={(e) => setFormData({ ...formData, elevationM: Number(e.target.value) })}
-                className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500 font-bold"
+                placeholder="Ex: 850"
               />
+              <span className="text-[10px] text-stone-500 mt-1 block">Dénivelé officiel saisi par vous</span>
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
@@ -487,11 +494,10 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
                 setFormData((prev) => ({
                   ...prev,
                   elevationProfile: extracted.elevationProfile,
-                  elevationM: extracted.elevationM > 0 ? extracted.elevationM : prev.elevationM,
-                  distanceKm: extracted.distanceKm > 0 ? extracted.distanceKm : prev.distanceKm,
+                  // NOTE: formData.elevationM & distanceKm are preserved as entered manually by the user
                 }));
                 setGpxSyncNotice(
-                  `Profil altimétrique extrait et appliqué : +${extracted.elevationM}m D+, ${extracted.distanceKm} km (${extracted.pointCount} points GPS analysés)`
+                  `Courbe de profil altimétrique générée d'après la trace GPX pour le graphique de relief. Votre dénivelé officiel reste celui saisi manuellement (${formData.elevationM}m D+).`
                 );
               }}
             />

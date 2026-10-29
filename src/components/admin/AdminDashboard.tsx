@@ -1642,16 +1642,18 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
         onClose={() => setIsEmailModalOpen(false)}
       />
 
-      <RideAttendeesModal
-        isOpen={Boolean(selectedRideForAttendees)}
-        ride={selectedRideForAttendees}
-        onClose={() => setSelectedRideForAttendees(null)}
-        registrations={registrations}
-        members={members}
-        onUpdateRegistrationStatus={updateRegistrationStatus}
-        onDeleteRegistration={deleteRegistration}
-        onAddManualRegistration={(reg) => addRegistration(reg)}
-      />
+      {selectedRideForAttendees && (
+        <RideAttendeesModal
+          isOpen={Boolean(selectedRideForAttendees)}
+          ride={selectedRideForAttendees}
+          onClose={() => setSelectedRideForAttendees(null)}
+          registrations={registrations || []}
+          members={members || []}
+          onUpdateRegistrationStatus={updateRegistrationStatus}
+          onDeleteRegistration={deleteRegistration}
+          onAddManualRegistration={(reg) => addRegistration(reg)}
+        />
+      )}
     </div>
   );
 }

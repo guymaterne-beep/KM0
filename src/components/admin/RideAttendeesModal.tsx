@@ -40,12 +40,13 @@ export default function RideAttendeesModal({
   isOpen,
   ride,
   onClose,
-  registrations,
-  members,
+  registrations = [],
+  members = [],
   onUpdateRegistrationStatus,
   onDeleteRegistration,
   onAddManualRegistration,
 }: RideAttendeesModalProps) {
+  // ALL HOOKS MUST RUN UNCONDITIONALLY AT THE TOP
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showAddForm, setShowAddForm] = useState(false);
@@ -59,34 +60,40 @@ export default function RideAttendeesModal({
   const [newRiderNotes, setNewRiderNotes] = useState('');
   const [newRiderPaid, setNewRiderPaid] = useState<number>(0);
 
-  if (!isOpen || !ride) return null;
-
-  // Filter registrations for this specific ride
+  // Filter registrations for this specific ride (safe check)
   const rideRegistrations = useMemo(() => {
-    return registrations.filter((r) => r.type === 'ride' && r.targetId === ride.id);
-  }, [registrations, ride.id]);
+    if (!ride || !Array.isArray(registrations)) return [];
+    return registrations.filter((r) => r && r.type === 'ride' && r.targetId === ride.id);
+  }, [registrations, ride?.id]);
 
-  // Search and status filtering
+  // Search and status filtering (safe check)
   const filteredAttendees = useMemo(() => {
+    if (!Array.isArray(rideRegistrations)) return [];
     return rideRegistrations.filter((reg) => {
+      if (!reg) return false;
       if (statusFilter !== 'all' && reg.status !== statusFilter) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        return (
-          reg.name.toLowerCase().includes(q) ||
-          reg.email.toLowerCase().includes(q) ||
-          reg.phone.toLowerCase().includes(q) ||
-          (reg.details?.bikeModel && reg.details.bikeModel.toLowerCase().includes(q))
-        );
+        const name = (reg.name || '').toLowerCase();
+        const email = (reg.email || '').toLowerCase();
+        const phone = (reg.phone || '').toLowerCase();
+        const bike = (reg.details?.bikeModel || '').toLowerCase();
+        return name.includes(q) || email.includes(q) || phone.includes(q) || bike.includes(q);
       }
       return true;
     });
   }, [rideRegistrations, statusFilter, searchQuery]);
 
-  // Cross-reference with registered club members to show role & badge
-  const getMemberDetails = (email: string) => {
-    return members.find((m) => m.email.toLowerCase() === email.toLowerCase());
+  // Cross-reference with registered club members safely
+  const getMemberDetails = (email?: string) => {
+    if (!email || !Array.isArray(members)) return undefined;
+    return members.find((m) => m && m.email && m.email.toLowerCase() === email.toLowerCase().trim());
   };
+
+  // Safe early exit only AFTER all hooks have executed
+  if (!isOpen || !ride) {
+    return null;
+  }
 
   // Export CSV for the ride captain / guide
   const handleExportCsv = () => {
@@ -108,16 +115,16 @@ export default function RideAttendeesModal({
     const rows = rideRegistrations.map((r) => {
       const member = getMemberDetails(r.email);
       return [
-        `"${r.name.replace(/"/g, '""')}"`,
-        r.email,
-        `"${r.phone}"`,
-        r.status,
+        `"${(r.name || '').replace(/"/g, '""')}"`,
+        r.email || '',
+        `"${r.phone || ''}"`,
+        r.status || 'confirmé',
         member ? 'OUI' : 'NON',
         member?.role || 'visiteur',
         `"${r.details?.paceGroup || 'standard'}"`,
         `"${(r.details?.bikeModel || '').replace(/"/g, '""')}"`,
         `"${(r.details?.notes || '').replace(/"/g, '""')}"`,
-        `"${r.dateCreated}"`,
+        `"${r.dateCreated || ''}"`,
         r.paymentMethod || 'gratuit',
         r.amountPaid ?? 0,
       ];
@@ -127,7 +134,7 @@ export default function RideAttendeesModal({
       'data:text/csv;charset=utf-8,' +
       [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
 
-    const cleanTitle = ride.title.toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 30);
+    const cleanTitle = (ride.title || 'sortie').toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 30);
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -260,7 +267,7 @@ export default function RideAttendeesModal({
               <div
                 className="bg-amber-500 h-full rounded-full"
                 style={{
-                  width: `${Math.min(100, (rideRegistrations.length / ride.maxParticipants) * 100)}%`,
+                  width: `${Math.min(100, (rideRegistrations.length / (ride.maxParticipants || 1)) * 100)}%`,
                 }}
               />
             </div>
@@ -507,28 +514,35 @@ export default function RideAttendeesModal({
                   <tbody className="divide-y divide-stone-100">
                     {filteredAttendees.map((reg) => {
                       const member = getMemberDetails(reg.email);
+                      const initials = ((reg.name || 'C')
+                        .trim()
+                        .split(/\s+/)
+                        .map((n) => n[0] || '')
+                        .filter(Boolean)
+                        .slice(0, 2)
+                        .join('')
+                        .toUpperCase()) || 'KM';
+
                       return (
                         <tr key={reg.id} className="hover:bg-amber-50/20 transition-colors">
                           {/* Name & Contact */}
                           <td className="py-3.5 px-4 font-semibold text-stone-900">
                             <div className="flex items-center gap-2.5">
                               <div className="w-8 h-8 rounded-full bg-stone-100 border border-stone-300 text-stone-800 flex items-center justify-center font-bold text-xs uppercase shrink-0">
-                                {reg.name
-                                  .split(' ')
-                                  .map((n) => n[0])
-                                  .slice(0, 2)
-                                  .join('')}
+                                {initials}
                               </div>
                               <div className="min-w-0">
-                                <div className="font-bold text-stone-900 text-sm">{reg.name}</div>
+                                <div className="font-bold text-stone-900 text-sm">{reg.name || 'Participant'}</div>
                                 <div className="flex items-center gap-2 text-[11px] text-stone-500 mt-0.5">
-                                  <a
-                                    href={`mailto:${reg.email}`}
-                                    className="hover:text-amber-700 flex items-center gap-1 font-medium underline"
-                                  >
-                                    <Mail className="w-3 h-3 text-stone-400" />
-                                    <span>{reg.email}</span>
-                                  </a>
+                                  {reg.email && (
+                                    <a
+                                      href={`mailto:${reg.email}`}
+                                      className="hover:text-amber-700 flex items-center gap-1 font-medium underline"
+                                    >
+                                      <Mail className="w-3 h-3 text-stone-400" />
+                                      <span>{reg.email}</span>
+                                    </a>
+                                  )}
                                   {reg.phone && (
                                     <>
                                       <span>•</span>
@@ -596,7 +610,7 @@ export default function RideAttendeesModal({
 
                           {/* Date Created */}
                           <td className="py-3.5 px-4 whitespace-nowrap text-stone-600 font-mono text-[11px]">
-                            {reg.dateCreated}
+                            {reg.dateCreated || 'Récente'}
                           </td>
 
                           {/* Payment */}
@@ -614,7 +628,7 @@ export default function RideAttendeesModal({
                           {/* Status Dropdown */}
                           <td className="py-3.5 px-4 whitespace-nowrap">
                             <select
-                              value={reg.status}
+                              value={reg.status || 'confirmé'}
                               onChange={(e) =>
                                 onUpdateRegistrationStatus(reg.id, e.target.value as any)
                               }
@@ -638,7 +652,7 @@ export default function RideAttendeesModal({
                               onClick={() => {
                                 if (
                                   window.confirm(
-                                    `Désinscrire ${reg.name} de cette sortie ? Cela libérera une place dans le peloton.`
+                                    `Désinscrire ${reg.name || 'ce coureur'} de cette sortie ? Cela libérera une place dans le peloton.`
                                   )
                                 ) {
                                   onDeleteRegistration(reg.id);

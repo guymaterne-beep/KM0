@@ -307,10 +307,10 @@ export default function GpxUploadField({
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-stone-900 uppercase tracking-wider">
-                      Profil altimétrique extrait du GPX
+                      Courbe de relief altimétrique (Visuel)
                     </h4>
                     <p className="text-[11px] text-stone-500">
-                      Généré à partir de {extractedProfile.pointCount} coordonnées GPS réelles
+                      Génère la silhouette du relief ({extractedProfile.pointCount} points GPS). Votre D+ officiel reste manuel.
                     </p>
                   </div>
                 </div>
@@ -328,12 +328,12 @@ export default function GpxUploadField({
                     {hasAppliedProfile ? (
                       <>
                         <Check className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>Profil synchronisé avec la sortie</span>
+                        <span>Courbe de relief synchronisée</span>
                       </>
                     ) : (
                       <>
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>Générer &amp; appliquer le profil au formulaire</span>
+                        <span>Appliquer la courbe au profil visuel</span>
                       </>
                     )}
                   </button>
@@ -344,13 +344,13 @@ export default function GpxUploadField({
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-center">
                 <div className="p-2 rounded-lg bg-stone-50 border border-stone-200">
                   <span className="text-[10px] uppercase font-bold text-stone-500 block">Dénivelé D+</span>
-                  <span className="text-sm font-extrabold text-amber-700 font-mono">
-                    +{extractedProfile.elevationM} m
+                  <span className="text-xs font-bold text-amber-800 font-mono">
+                    Saisi manuellement
                   </span>
                 </div>
                 <div className="p-2 rounded-lg bg-stone-50 border border-stone-200">
                   <span className="text-[10px] uppercase font-bold text-stone-500 block">Distance GPX</span>
-                  <span className="text-sm font-extrabold text-stone-900 font-mono">
+                  <span className="text-xs font-bold text-stone-900 font-mono">
                     {extractedProfile.distanceKm} km
                   </span>
                 </div>
@@ -361,9 +361,9 @@ export default function GpxUploadField({
                   </span>
                 </div>
                 <div className="p-2 rounded-lg bg-stone-50 border border-stone-200">
-                  <span className="text-[10px] uppercase font-bold text-stone-500 block">D- (Descente)</span>
+                  <span className="text-[10px] uppercase font-bold text-stone-500 block">Points GPS</span>
                   <span className="text-xs font-bold text-stone-600 font-mono">
-                    -{extractedProfile.elevationLossM} m
+                    {extractedProfile.pointCount} coordonnées
                   </span>
                 </div>
               </div>
