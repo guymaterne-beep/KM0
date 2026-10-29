@@ -129,7 +129,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [rides, setRides] = useState<Ride[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.RIDES);
-      return stored ? JSON.parse(stored) : RIDES_DATA;
+      if (!stored) return RIDES_DATA;
+      const parsed: Ride[] = JSON.parse(stored);
+      return parsed.map((r) => {
+        const def = RIDES_DATA.find((d) => d.id === r.id);
+        return {
+          ...r,
+          photos: r.photos && r.photos.length > 0 ? r.photos : def?.photos || [],
+        };
+      });
     } catch {
       return RIDES_DATA;
     }
@@ -138,7 +146,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [trips, setTrips] = useState<Trip[]>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.TRIPS);
-      return stored ? JSON.parse(stored) : TRIPS_DATA;
+      if (!stored) return TRIPS_DATA;
+      const parsed: Trip[] = JSON.parse(stored);
+      return parsed.map((t) => {
+        const def = TRIPS_DATA.find((d) => d.id === t.id);
+        return {
+          ...t,
+          photos: t.photos && t.photos.length > 0 ? t.photos : def?.photos || [],
+        };
+      });
     } catch {
       return TRIPS_DATA;
     }

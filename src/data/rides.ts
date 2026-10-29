@@ -26,6 +26,7 @@ export interface Ride {
   gpxFileSize?: string;
   gpxData?: string;
   gpxUploadedAt?: string;
+  photos?: string[];
 }
 
 export const RIDES_DATA: Ride[] = [
@@ -60,6 +61,12 @@ export const RIDES_DATA: Ride[] = [
     gpxFileName: 'trace_km0_vtt_aywaille_46k.gpx',
     gpxFileSize: '24.2 KB',
     gpxUploadedAt: '2026-10-24 10:15',
+    photos: [
+      'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'ride-vtt-meerdaal',
@@ -91,6 +98,11 @@ export const RIDES_DATA: Ride[] = [
     featured: false,
     gpxFileName: 'trace_km0_meerdaal_vtt_52km.gpx',
     gpxFileSize: '28.1 KB',
+    photos: [
+      'https://images.unsplash.com/photo-1502744688674-c619d3864003?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'ride-vtt-botrange',
@@ -122,6 +134,11 @@ export const RIDES_DATA: Ride[] = [
     featured: true,
     gpxFileName: 'trace_km0_botrange_fagnes_42km.gpx',
     gpxFileSize: '22.8 KB',
+    photos: [
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'ride-gravel-brabant',
@@ -153,6 +170,11 @@ export const RIDES_DATA: Ride[] = [
     featured: true,
     gpxFileName: 'trace_km0_gravel_brabanconne_78km.gpx',
     gpxFileSize: '39.4 KB',
+    photos: [
+      'https://images.unsplash.com/photo-1471506480208-91b3a4cc78be?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'ride-gravel-herve',
@@ -182,6 +204,10 @@ export const RIDES_DATA: Ride[] = [
     apresRide: 'Cidre artisanal, fromage de Herve AOP au sirop de Liège et bière Val-Dieu.',
     elevationProfile: [20, 45, 60, 40, 75, 55, 85, 70, 90, 65, 50, 25],
     featured: false,
+    photos: [
+      'https://images.unsplash.com/photo-1502744688674-c619d3864003?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1471506480208-91b3a4cc78be?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'ride-route-doyenne',
@@ -211,6 +237,11 @@ export const RIDES_DATA: Ride[] = [
     apresRide: 'Le traditionnel cornet de frites belges croustillantes & bière trappiste Orval bien fraîche.',
     elevationProfile: [10, 30, 20, 65, 45, 80, 50, 95, 70, 85, 40, 15],
     featured: true,
+    photos: [
+      'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1471506480208-91b3a4cc78be?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'ride-route-flandrienne',
@@ -240,6 +271,10 @@ export const RIDES_DATA: Ride[] = [
     apresRide: 'Kwaremont au fût dans le café historique et gaufres croustillantes.',
     elevationProfile: [15, 35, 20, 70, 40, 85, 60, 95, 50, 75, 35, 15],
     featured: false,
+    photos: [
+      'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'ride-gravel-pajottenland',
@@ -269,5 +304,9 @@ export const RIDES_DATA: Ride[] = [
     apresRide: 'Visite d’une brasserie traditionnelle de Gueuze artisanale et dégustation au soleil.',
     elevationProfile: [15, 30, 45, 35, 50, 40, 60, 45, 55, 30, 20, 15],
     featured: false,
+    photos: [
+      'https://images.unsplash.com/photo-1502744688674-c619d3864003?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80',
+    ],
   }
 ];

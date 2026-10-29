@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Ride } from '../../data/rides';
 import { X, Bike, Save, CheckCircle2 } from 'lucide-react';
 import GpxUploadField from './GpxUploadField';
+import PhotoGalleryManager from './PhotoGalleryManager';
 
 interface RideFormModalProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
     gpxFileSize: '' as string | undefined,
     gpxData: '' as string | undefined,
     gpxUploadedAt: '' as string | undefined,
+    photos: [] as string[],
   });
 
   const [highlightInput, setHighlightInput] = useState('');
@@ -68,6 +70,7 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
         gpxFileSize: rideToEdit.gpxFileSize || '',
         gpxData: rideToEdit.gpxData || '',
         gpxUploadedAt: rideToEdit.gpxUploadedAt || '',
+        photos: rideToEdit.photos || [],
       });
     } else {
       setFormData({
@@ -95,6 +98,7 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
         gpxFileSize: '',
         gpxData: '',
         gpxUploadedAt: '',
+        photos: [],
       });
     }
   }, [rideToEdit, isOpen]);
@@ -500,6 +504,16 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
                   `Courbe de profil altimétrique générée d'après la trace GPX pour le graphique de relief. Votre dénivelé officiel reste celui saisi manuellement (${formData.elevationM}m D+).`
                 );
               }}
+            />
+          </div>
+
+          {/* Photo Gallery Manager */}
+          <div className="pt-2 border-t border-stone-200">
+            <PhotoGalleryManager
+              photos={formData.photos}
+              onChange={(newPhotos) => setFormData((prev) => ({ ...prev, photos: newPhotos }))}
+              title="Galerie Photos de la Sortie"
+              subtitle="Photos du parcours, paysages ou souvenirs d’éditions précédentes (affichées dans la fiche de la sortie)."
             />
           </div>
 

@@ -22,6 +22,7 @@ export interface Trip {
   gpxFileSize?: string;
   gpxData?: string;
   gpxUploadedAt?: string;
+  photos?: string[];
 }
 
 export const TRIPS_DATA: Trip[] = [
@@ -61,6 +62,12 @@ export const TRIPS_DATA: Trip[] = [
     gpxFileName: 'trace_km0_ardennes_epic_bikepacking_300k.gpx',
     gpxFileSize: '112.5 KB',
     gpxUploadedAt: '2026-10-22 14:00',
+    photos: [
+      'https://images.unsplash.com/photo-1507035895480-2b3156c31fc8?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1471506480208-91b3a4cc78be?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'trip-swiss-prealpes-km0',
@@ -97,7 +104,12 @@ export const TRIPS_DATA: Trip[] = [
       { day: 'Jour 4', title: 'Pays d’Enhaut & Lac Léman en toile de fond', desc: 'Vues spectaculaires sur les glaciers et les sommets environnants.', stats: '85 km · 1 800m D+' },
       { day: 'Jour 5', title: 'Grand Tour des Crêtes et Festin KM0 de clôture', desc: 'Dernière chevauchée alpine et repas de célébration avant le retour.', stats: '60 km · 1 100m D+' }
     ],
-    tagKm0Partner: 'Connexion directe KM0 Suisse'
+    tagKm0Partner: 'Connexion directe KM0 Suisse',
+    photos: [
+      'https://images.unsplash.com/photo-1471506480208-91b3a4cc78be?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1502744688674-c619d3864003?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'stage-printemps-majorque',
@@ -131,7 +143,12 @@ export const TRIPS_DATA: Trip[] = [
       { day: 'Jour 3-4', title: 'Cap de Formentor & Col de Soller', desc: 'Les grandes montées régulières, gestion du rythme au capteur de puissance ou cardio.', stats: '115 km · 1 850m D+' },
       { day: 'Jour 5-6', title: 'Le Monument de Sa Calobra & Puig Major', desc: 'L’étape reine du séjour, 26 lacets féeriques plongeant dans la mer.', stats: '130 km · 2 400m D+' },
       { day: 'Jour 7', title: 'Tour de récupération et départ', desc: 'Sortie café de 50km très souple avant le vol de retour vers Bruxelles.', stats: '50 km · 350m D+' }
-    ]
+    ],
+    photos: [
+      'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1471506480208-91b3a4cc78be?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=80',
+    ],
   },
   {
     id: 'stage-pilotage-vtt-hiver',
@@ -163,6 +180,11 @@ export const TRIPS_DATA: Trip[] = [
     dailyProgram: [
       { day: 'Jour 1', title: 'Fondamentaux & Virages en terrain meuble', desc: 'Position du corps, répartition des masses, freinage d’urgence et passages de dévers.', stats: '28 km · 650m D+' },
       { day: 'Jour 2', title: 'Franchissements de marches & Rythme en sous-bois', desc: 'Sauts, bunny hops appliqués, relances en bosse raide et descente engagée sécurisée.', stats: '34 km · 850m D+' }
-    ]
+    ],
+    photos: [
+      'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1576435728678-68d0fbf94e91?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80',
+    ],
   }
 ];

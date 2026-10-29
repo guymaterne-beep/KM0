@@ -2,7 +2,24 @@ import { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Ride } from '../data/rides';
 import { PaymentTransaction } from '../data/club';
-import { X, Calendar, Clock, MapPin, Gauge, CheckCircle2, User, FileDown, Share2, Check, Lock, CreditCard } from 'lucide-react';
+import {
+  X,
+  Calendar,
+  Clock,
+  MapPin,
+  Gauge,
+  CheckCircle2,
+  User,
+  FileDown,
+  Share2,
+  Check,
+  Lock,
+  CreditCard,
+  Camera,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+} from 'lucide-react';
 import { PaymentCheckoutModal } from './payment/PaymentCheckoutModal';
 import { downloadGpxFile } from '../utils/gpxHelper';
 
@@ -20,6 +37,7 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
   const [copiedLink, setCopiedLink] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [completedTx, setCompletedTx] = useState<PaymentTransaction | null>(null);
+  const [activePhotoIndex, setActivePhotoIndex] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: currentMember ? currentMember.firstName : '',

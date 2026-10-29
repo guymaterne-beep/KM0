@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Trip } from '../../data/trips';
 import { X, Compass, Save } from 'lucide-react';
 import GpxUploadField from './GpxUploadField';
+import PhotoGalleryManager from './PhotoGalleryManager';
 
 interface TripFormModalProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
     gpxFileSize: '' as string | undefined,
     gpxData: '' as string | undefined,
     gpxUploadedAt: '' as string | undefined,
+    photos: [] as string[],
   });
 
   const [highlightInput, setHighlightInput] = useState('');
@@ -68,6 +70,7 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
         gpxFileSize: tripToEdit.gpxFileSize || '',
         gpxData: tripToEdit.gpxData || '',
         gpxUploadedAt: tripToEdit.gpxUploadedAt || '',
+        photos: tripToEdit.photos || [],
       });
     } else {
       setFormData({
@@ -97,6 +100,7 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
         gpxFileSize: '',
         gpxData: '',
         gpxUploadedAt: '',
+        photos: [],
       });
     }
   }, [tripToEdit, isOpen]);
@@ -393,6 +397,16 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
                   gpxUploadedAt,
                 })
               }
+            />
+          </div>
+
+          {/* Photo Gallery Manager */}
+          <div className="pt-2 border-t border-stone-200">
+            <PhotoGalleryManager
+              photos={formData.photos}
+              onChange={(newPhotos) => setFormData((prev) => ({ ...prev, photos: newPhotos }))}
+              title="Galerie Photos du Voyage"
+              subtitle="Photos des étapes, hébergements, paysages ou moments forts de l'aventure (affichées dans la fiche du voyage)."
             />
           </div>
 
