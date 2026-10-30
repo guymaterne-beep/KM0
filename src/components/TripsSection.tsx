@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Trip } from '../data/trips';
-import { Compass, ArrowRight } from 'lucide-react';
+import { Compass, ArrowRight, Camera } from 'lucide-react';
 
 interface TripsSectionProps {
   onSelectTrip: (trip: Trip) => void;
@@ -66,12 +66,21 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
               <div>
                 <div className="flex items-center justify-between gap-2 mb-4">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">
+                    <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-sky-100 text-sky-900 border border-sky-200">
                       {trip.country}
                     </span>
                     <span className="text-stone-500 font-medium text-xs">
                       {trip.durationDays} jours
                     </span>
+                    {trip.photos && trip.photos.length > 0 && (
+                      <span
+                        className="font-mono text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1"
+                        title={`${trip.photos.length} photos du séjour`}
+                      >
+                        <Camera className="w-3 h-3 text-sky-600" />
+                        <span>{trip.photos.length}</span>
+                      </span>
+                    )}
                   </div>
 
                   <span

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Trip } from '../data/trips';
 import { PaymentTransaction } from '../data/club';
-import { X, Calendar, MapPin, Users, CheckCircle2, Shield, Compass, Send, CreditCard, Lock, FileDown } from 'lucide-react';
+import { X, Calendar, MapPin, Users, CheckCircle2, Shield, Compass, Send, CreditCard, Lock, FileDown, Camera, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { PaymentCheckoutModal } from './payment/PaymentCheckoutModal';
 import { downloadGpxFile } from '../utils/gpxHelper';
 
@@ -19,6 +19,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
   const [submitted, setSubmitted] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [completedTx, setCompletedTx] = useState<PaymentTransaction | null>(null);
+  const [activePhotoIndex, setActivePhotoIndex] = useState<number | null>(null);
 
   const depositAmount = 150; // Acompte standard
 
@@ -240,6 +241,50 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
               </button>
             </div>
 
+            {/* Photo Gallery Section */}
+            {trip.photos && trip.photos.length > 0 && (
+              <div className="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-sky-600" />
+                    <h4 className="font-display text-base font-bold uppercase text-stone-900 tracking-wide">
+                      Galerie Photos de l'Aventure
+                    </h4>
+                  </div>
+                  <span className="text-xs text-stone-500 font-semibold">
+                    {trip.photos.length} photo{trip.photos.length > 1 ? 's' : ''} disponibles
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {trip.photos.map((photoUrl, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => setActivePhotoIndex(idx)}
+                      className="group relative aspect-4/3 rounded-xl overflow-hidden bg-stone-200 border border-stone-200 cursor-pointer shadow-xs hover:shadow-md transition-all"
+                    >
+                      <img
+                        src={photoUrl}
+                        alt={`${trip.title} - photo ${idx + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-stone-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="p-2 rounded-lg bg-stone-900/80 text-white backdrop-blur-xs">
+                          <Maximize2 className="w-4 h-4" />
+                        </span>
+                      </div>
+                      {idx === 0 && (
+                        <span className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-sky-900/80 text-white text-[9px] font-bold uppercase tracking-wider backdrop-blur-xs">
+                          Couverture
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Registration Form */}
             <div className="pt-6 border-t border-stone-200">
               {submitted ? (
@@ -413,6 +458,111 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
           password={formData.password}
           onPaymentSuccess={handlePaymentSuccess}
         />
+      )}
+
+      {/* Full-screen Photo Lightbox Modal */}
+      {activePhotoIndex !== null && trip.photos && trip.photos.length > 0 && (
+        <div
+          className="fixed inset-0 z-60 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6"
+          onClick={() => setActivePhotoIndex(null)}
+        >
+          {/* Lightbox Top Bar */}
+          <div
+            className="flex items-center justify-between text-white z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <span className="font-display uppercase text-sm sm:text-base font-bold tracking-wider text-white">
+                {trip.title}
+              </span>
+              <span className="text-xs text-stone-400 font-mono">
+                {activePhotoIndex + 1} / {trip.photos.length}
+              </span>
+            </div>
+
+            <button
+              onClick={() => setActivePhotoIndex(null)}
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+              title="Fermer (Échap)"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Lightbox Main Image & Arrows */}
+          <div
+            className="relative flex-1 flex items-center justify-center my-4 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {trip.photos.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActivePhotoIndex((prev) =>
+                    prev !== null
+                      ? prev === 0
+                        ? (trip.photos?.length || 1) - 1
+                        : prev - 1
+                      : 0
+                  );
+                }}
+                className="absolute left-2 sm:left-4 z-20 p-3 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+                title="Photo précédente"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+
+            <img
+              src={trip.photos[activePhotoIndex]}
+              alt={`${trip.title} - photo ${activePhotoIndex + 1}`}
+              className="max-h-[72vh] max-w-full object-contain rounded-lg shadow-2xl select-none"
+            />
+
+            {trip.photos.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActivePhotoIndex((prev) =>
+                    prev !== null
+                      ? prev === (trip.photos?.length || 1) - 1
+                        ? 0
+                        : prev + 1
+                      : 0
+                  );
+                }}
+                className="absolute right-2 sm:right-4 z-20 p-3 rounded-full bg-black/60 hover:bg-black/90 text-white border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105"
+                title="Photo suivante"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            )}
+          </div>
+
+          {/* Lightbox Bottom Thumbnail Strip */}
+          <div
+            className="flex items-center justify-center gap-2 overflow-x-auto py-2 z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {trip.photos.map((thumb, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActivePhotoIndex(idx)}
+                className={`relative w-14 h-11 sm:w-16 sm:h-12 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
+                  activePhotoIndex === idx
+                    ? 'border-sky-400 scale-105 opacity-100'
+                    : 'border-transparent opacity-50 hover:opacity-80'
+                }`}
+              >
+                <img
+                  src={thumb}
+                  alt={`Vignette ${idx + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
       )}
     </>
   );

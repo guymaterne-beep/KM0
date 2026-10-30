@@ -125,28 +125,30 @@ export default function Navbar({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Brand Identity */}
           <a href="#" className="flex items-center gap-3.5 group">
-            <div className="relative w-11 h-11 bg-stone-900 border border-stone-800 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-102 transition-transform">
-              <span className="font-display text-2xl font-black tracking-tight text-white">
-                KM<span className="text-amber-400">0</span>
-              </span>
-              {/* Belgian flag stripe */}
-              <div className="absolute -bottom-1 left-2 right-2 h-1 rounded-full overflow-hidden flex shadow-xs">
+            <div className="flex flex-col items-center">
+              <img
+                src="/assets/aistudio/km0-logobike_Bleu_f5171d81.png"
+                alt="KM ZERO Belgique"
+                className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105"
+              />
+              {/* Belgian flag stripe under logo */}
+              <div className="flex h-1.5 w-14 rounded-full overflow-hidden shadow-xs mt-1 border border-stone-200">
                 <div className="w-1/3 bg-black" />
-                <div className="w-1/3 bg-amber-400" />
-                <div className="w-1/3 bg-red-600" />
+                <div className="w-1/3 bg-[#facc15]" />
+                <div className="w-1/3 bg-[#ef4444]" />
               </div>
             </div>
 
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="font-display text-xl sm:text-2xl font-extrabold tracking-wide uppercase text-stone-900">
+                <span className="font-display text-xl sm:text-2xl font-black tracking-wide uppercase text-slate-900">
                   PROJET KM0
                 </span>
-                <span className="bg-amber-100 text-amber-900 text-[10px] font-black px-1.5 py-0.5 rounded tracking-widest border border-amber-300">
+                <span className="bg-sky-100 text-sky-900 text-[10px] font-black px-1.5 py-0.5 rounded tracking-widest border border-sky-300">
                   BELGIQUE
                 </span>
               </div>
-              <span className="text-[11px] text-stone-500 font-medium tracking-wide">
+              <span className="text-[11px] text-slate-500 font-medium tracking-wide">
                 Club Cycliste · VTT Hiver · Gravel &amp; Route
               </span>
             </div>
@@ -158,7 +160,7 @@ export default function Navbar({
               <a
                 key={link.href}
                 href={link.href}
-                className="text-stone-700 hover:text-amber-700 text-sm font-semibold tracking-wide transition-colors py-1 relative hover:after:w-full after:w-0 after:h-0.5 after:bg-amber-500 after:absolute after:bottom-0 after:left-0 after:transition-all"
+                className="text-slate-700 hover:text-sky-700 text-sm font-semibold tracking-wide transition-colors py-1 relative hover:after:w-full after:w-0 after:h-0.5 after:bg-sky-500 after:absolute after:bottom-0 after:left-0 after:transition-all"
               >
                 {link.label}
               </a>
@@ -171,17 +173,17 @@ export default function Navbar({
             {currentMember ? (
               <button
                 onClick={onOpenMemberPortal}
-                className="px-3.5 py-2 text-xs font-bold text-amber-950 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+                className="px-3.5 py-2 text-xs font-bold text-sky-950 bg-sky-100 hover:bg-sky-200 border border-sky-300 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
               >
-                <UserCheck className="w-3.5 h-3.5 text-amber-700" />
+                <UserCheck className="w-3.5 h-3.5 text-sky-700" />
                 <span>Mon Espace ({currentMember.firstName})</span>
               </button>
             ) : (
               <button
                 onClick={onOpenMemberLogin}
-                className="px-3.5 py-2 text-xs font-semibold text-stone-700 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+                className="px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
               >
-                <User className="w-3.5 h-3.5 text-stone-500" />
+                <User className="w-3.5 h-3.5 text-slate-500" />
                 <span>Connexion Membre</span>
               </button>
             )}
@@ -198,9 +200,9 @@ export default function Navbar({
 
             <button
               onClick={onOpenMembership}
-              className="px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#162438] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5 border border-sky-400/40"
             >
-              <Bike className="w-3.5 h-3.5" />
+              <Bike className="w-3.5 h-3.5 text-sky-400" />
               <span>Rejoindre le Club</span>
             </button>
           </div>

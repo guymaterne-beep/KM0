@@ -9,16 +9,16 @@ export default function SeasonPhilosophy() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 border border-amber-300 rounded-full text-amber-900 text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-100 border border-sky-300 rounded-full text-sky-900 text-xs font-bold uppercase tracking-wider mb-4">
             <span>Le Concept KM0 Belgique</span>
           </div>
-          <h2 className="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-tight text-stone-950 mb-4">
+          <h2 className="font-display text-3xl sm:text-5xl font-extrabold uppercase tracking-tight text-slate-950 mb-4">
             VTT l’hiver, Gravel &amp; Route <br />
-            <span className="text-amber-600">le reste de l’année.</span>
+            <span className="text-[#1e2f47] underline decoration-sky-400 decoration-2">le reste de l’année.</span>
           </h2>
-          <p className="text-stone-700 text-base sm:text-lg leading-relaxed">
-            En Belgique, la météo ne dicte pas si nous roulons, mais <span className="text-stone-950 font-bold">comment</span> nous roulons.
-            Inspiré de l’exigence suisse de <strong className="text-stone-950">Projet KM0</strong> et nourri de notre amour indéfectible pour le vélo,
+          <p className="text-slate-700 text-base sm:text-lg leading-relaxed">
+            En Belgique, la météo ne dicte pas si nous roulons, mais <span className="text-slate-950 font-bold">comment</span> nous roulons.
+            Inspiré de l’exigence suisse de <strong className="text-slate-950">Projet KM0</strong> et nourri de notre amour indéfectible pour le vélo,
             notre club vit au diapason des saisons.
           </p>
         </div>

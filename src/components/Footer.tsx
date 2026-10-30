@@ -12,31 +12,35 @@ export default function Footer({ onOpenAdminLogin }: FooterProps) {
           {/* Col 1: Brand & Origin */}
           <div className="space-y-4 md:col-span-1">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-stone-900 border border-stone-800 rounded-xl flex items-center justify-center font-display text-xl font-black text-amber-400 shadow-xs">
-                KM0
+              <div className="flex flex-col items-center">
+                <img
+                  src="/assets/aistudio/km0-logobike_Bleu_f5171d81.png"
+                  alt="KM ZERO Belgique"
+                  className="h-10 w-auto object-contain"
+                />
+                <div className="flex h-1.5 w-12 rounded-full overflow-hidden shadow-xs mt-1 border border-stone-200">
+                  <div className="w-1/3 bg-black" />
+                  <div className="w-1/3 bg-[#facc15]" />
+                  <div className="w-1/3 bg-[#ef4444]" />
+                </div>
               </div>
               <div>
-                <span className="font-display text-lg font-extrabold uppercase text-stone-900 tracking-wide block">
+                <span className="font-display text-lg font-black uppercase text-slate-900 tracking-wide block">
                   PROJET KM0 BELGIQUE
                 </span>
-                <span className="text-[11px] text-stone-500 font-medium">
+                <span className="text-[11px] text-slate-500 font-medium">
                   Club Cycliste · VTT · Gravel · Route
                 </span>
               </div>
             </div>
 
-            <p className="text-xs text-stone-600 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               L’antenne belge officielle de Projet KM0. Rouler toute l’année avec le standard suisse et la passion du terroir belge : VTT l’hiver, Gravel et Route le reste de l’année.
             </p>
 
             {/* Belgian Flag subtle accent */}
-            <div className="flex items-center gap-2 text-[11px] text-stone-600">
-              <div className="w-6 h-3 rounded-xs overflow-hidden flex shadow-xs">
-                <div className="w-1/3 bg-black" />
-                <div className="w-1/3 bg-amber-400" />
-                <div className="w-1/3 bg-red-600" />
-              </div>
-              <span className="font-medium">Référent Belge : Guy Materne</span>
+            <div className="flex items-center gap-2 text-[11px] text-slate-600">
+              <span className="font-semibold text-slate-800">Référent Belge : Guy Materne</span>
             </div>
           </div>
 

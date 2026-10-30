@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { Ride } from '../data/rides';
-import { Calendar, MapPin, Search, ArrowUpRight, Snowflake, Leaf, Sun, Clock, Plus } from 'lucide-react';
+import { Calendar, MapPin, Search, ArrowUpRight, Snowflake, Leaf, Sun, Clock, Plus, Camera } from 'lucide-react';
 
 interface RideCalendarProps {
   onSelectRide: (ride: Ride) => void;
@@ -197,11 +197,20 @@ export default function RideCalendar({ onSelectRide, onOpenAdminLogin }: RideCal
                         </span>
                         {ride.gpxFileName && (
                           <span
-                            className="font-mono text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-200 flex items-center gap-1"
+                            className="font-mono text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-50 text-sky-900 border border-sky-200 flex items-center gap-1"
                             title="Trace GPX officielle uploadée par le club"
                           >
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
                             GPX
+                          </span>
+                        )}
+                        {ride.photos && ride.photos.length > 0 && (
+                          <span
+                            className="font-mono text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1"
+                            title={`${ride.photos.length} photos du parcours disponibles`}
+                          >
+                            <Camera className="w-3 h-3 text-sky-600" />
+                            <span>{ride.photos.length}</span>
                           </span>
                         )}
                       </div>
