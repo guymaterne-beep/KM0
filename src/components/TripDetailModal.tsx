@@ -234,7 +234,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
               <button
                 type="button"
                 onClick={handleDownloadGpx}
-                className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0"
+                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0"
               >
                 <FileDown className="w-3.5 h-3.5" />
                 <span>Télécharger la trace GPX</span>
@@ -306,14 +306,14 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                           onClose();
                           onOpenPortal();
                         }}
-                        className="px-5 py-2 text-xs font-bold text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl cursor-pointer"
+                        className="px-5 py-2 text-xs font-bold text-white bg-orange-500 hover:bg-orange-600 rounded-xl cursor-pointer"
                       >
                         Voir dans mon Espace Membre
                       </button>
                     )}
                     <button
                       onClick={onClose}
-                      className="px-5 py-2 text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-xl cursor-pointer"
+                      className="px-5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl cursor-pointer"
                     >
                       Fermer
                     </button>
@@ -322,10 +322,10 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
               ) : (
                 <form className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-display text-xl font-bold uppercase text-stone-950">
+                    <h3 className="font-display text-xl font-bold uppercase text-slate-950">
                       Réservation de votre place pour ce séjour
                     </h3>
-                    <span className="text-xs text-amber-800 font-bold">
+                    <span className="text-xs text-orange-600 font-bold bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200">
                       Acompte de confirmation : {depositAmount} €
                     </span>
                   </div>
@@ -430,7 +430,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                     <button
                       type="button"
                       onClick={handlePayDepositClick}
-                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
+                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-xs hover:shadow-md flex items-center gap-1.5 cursor-pointer"
                     >
                       <CreditCard className="w-3.5 h-3.5" />
                       <span>Régler l'acompte en ligne ({depositAmount} €)</span>

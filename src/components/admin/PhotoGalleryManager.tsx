@@ -310,7 +310,7 @@ export default function PhotoGalleryManager({
               type="button"
               onClick={() => handleAddUrl()}
               disabled={!urlInput.trim()}
-              className="w-full py-1 text-xs font-bold bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-stone-950 rounded-lg transition-colors cursor-pointer"
+              className="w-full py-1 text-xs font-bold bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white rounded-lg transition-colors cursor-pointer"
             >
               + Ajouter la photo
             </button>
@@ -484,7 +484,7 @@ export default function PhotoGalleryManager({
               <button
                 type="button"
                 onClick={handleAddAllPresets}
-                className="px-3.5 py-2 text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 rounded-xl transition-colors cursor-pointer"
+                className="px-3.5 py-2 text-xs font-bold bg-orange-100 hover:bg-orange-200 text-orange-950 border border-orange-300 rounded-xl transition-colors cursor-pointer"
               >
                 + Ajouter la sélection recommandée (4 photos)
               </button>

@@ -115,7 +115,7 @@ export default function Hero({ onExploreCalendar, onJoinClub, onOpenQuiz }: Hero
             }`}
           >
             <span>VTT Hiver</span>
-            <span className="text-[10px] px-1.5 py-0.2 bg-sky-400/20 text-sky-300 rounded font-bold">
+            <span className="text-[10px] px-1.5 py-0.2 bg-white/20 text-white rounded font-bold">
               En cours
             </span>
           </button>
@@ -147,9 +147,9 @@ export default function Hero({ onExploreCalendar, onJoinClub, onOpenQuiz }: Hero
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Left Column: Copy & Actions */}
           <div className="lg:col-span-7">
-            <div className="flex flex-wrap items-center gap-3 text-xs text-sky-900 font-bold mb-3">
-              <span className="flex items-center gap-1.5 bg-sky-100 border border-sky-300 px-2.5 py-0.5 rounded-lg">
-                <span className="w-2 h-2 rounded-full bg-sky-600 animate-pulse" />
+            <div className="flex flex-wrap items-center gap-3 text-xs text-[#1e2f47] font-bold mb-3">
+              <span className="flex items-center gap-1.5 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-lg text-[#1e2f47]">
+                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
                 {current.datesBadge}
               </span>
               <span className="text-slate-400 hidden sm:inline">·</span>
@@ -158,7 +158,7 @@ export default function Hero({ onExploreCalendar, onJoinClub, onOpenQuiz }: Hero
 
             <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-slate-950 leading-[0.95] mb-5">
               L’Âme Cycliste Belge, <br />
-              <span className="text-[#1e2f47] underline decoration-sky-400 decoration-wavy decoration-2">
+              <span className="text-[#1e2f47] underline decoration-blue-500 decoration-wavy decoration-2">
                 L’Esprit KM0.
               </span>
             </h1>
@@ -175,23 +175,23 @@ export default function Hero({ onExploreCalendar, onJoinClub, onOpenQuiz }: Hero
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-4">
               <button
                 onClick={onJoinClub}
-                className="px-6 py-3.5 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#162335] rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2 border border-sky-400/40"
+                className="px-6 py-3.5 text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center gap-2"
               >
                 <span>Rejoindre le Club KM0 Belgique</span>
-                <ArrowRight className="w-4 h-4 text-sky-400" />
+                <ArrowRight className="w-4 h-4 text-white" />
               </button>
 
               <button
                 onClick={onExploreCalendar}
-                className="px-5 py-3.5 text-xs sm:text-sm font-bold text-slate-800 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-300 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
+                className="px-5 py-3.5 text-xs sm:text-sm font-bold text-slate-800 hover:text-[#1e2f47] bg-white hover:bg-slate-50 border border-slate-300 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-2"
               >
-                <Calendar className="w-4 h-4 text-sky-600" />
+                <Calendar className="w-4 h-4 text-[#1e2f47]" />
                 <span>Voir les Prochaines Sorties</span>
               </button>
 
               <button
                 onClick={onOpenQuiz}
-                className="px-4 py-3.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-sky-700 underline underline-offset-4 cursor-pointer"
+                className="px-4 py-3.5 text-xs sm:text-sm font-semibold text-[#1e2f47] hover:text-blue-700 underline underline-offset-4 cursor-pointer"
               >
                 Calculer mon niveau physique &amp; technique →
               </button>

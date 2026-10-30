@@ -297,38 +297,46 @@ export function extractElevationProfileFromGpx(xmlContent: string): GpxProfileEx
     });
   }
 
-  // Sample exactly 16 points along the distance axis for responsive SVG curve
-  const sampleCount = 16;
+  // High-resolution sampling: 100 points along the distance axis for detailed, accurate relief
+  const sampleCount = 100;
   const sampledPoints: { distanceKm: number; elevationM: number }[] = [];
   const elevationProfile: number[] = [];
 
   const eleRange = maxEle - minEle;
 
+  // Optimized binary/sliding search for accurate distance-based elevation
+  let searchIdx = 0;
   for (let s = 0; s < sampleCount; s++) {
     const targetDist = (s / (sampleCount - 1)) * totalDistKm;
 
-    // Find point closest to target distance
-    let closestPoint = pointsWithDist[0];
-    let minDelta = Math.abs(pointsWithDist[0].distFromStartKm - targetDist);
+    while (
+      searchIdx < pointsWithDist.length - 1 &&
+      pointsWithDist[searchIdx + 1].distFromStartKm < targetDist
+    ) {
+      searchIdx++;
+    }
 
-    for (let p = 1; p < pointsWithDist.length; p++) {
-      const delta = Math.abs(pointsWithDist[p].distFromStartKm - targetDist);
-      if (delta < minDelta) {
-        minDelta = delta;
-        closestPoint = pointsWithDist[p];
+    let altitude = pointsWithDist[searchIdx].ele;
+    // Linear interpolation between consecutive track points for razor-sharp precision
+    if (searchIdx < pointsWithDist.length - 1) {
+      const p1 = pointsWithDist[searchIdx];
+      const p2 = pointsWithDist[searchIdx + 1];
+      const segSpan = p2.distFromStartKm - p1.distFromStartKm;
+      if (segSpan > 0.0001) {
+        const ratio = Math.max(0, Math.min(1, (targetDist - p1.distFromStartKm) / segSpan));
+        altitude = p1.ele + (p2.ele - p1.ele) * ratio;
       }
     }
 
-    const altitude = closestPoint.ele;
     sampledPoints.push({
       distanceKm: Math.round(targetDist * 10) / 10,
       elevationM: Math.round(altitude),
     });
 
-    // Normalize between 15% and 92% of the SVG height
+    // Normalize between 10% and 92% of the SVG height so valleys and summits stand out clearly
     if (eleRange > 5) {
-      const normalized = Math.round(15 + ((altitude - minEle) / eleRange) * 75);
-      elevationProfile.push(Math.max(10, Math.min(95, normalized)));
+      const normalized = Math.round(10 + ((altitude - minEle) / eleRange) * 82);
+      elevationProfile.push(Math.max(5, Math.min(95, normalized)));
     } else {
       elevationProfile.push(50);
     }

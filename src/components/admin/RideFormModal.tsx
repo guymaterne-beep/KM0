@@ -33,6 +33,8 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
     highlights: ['Singletracks forestiers techniques', 'Atelier pilotage à mi-parcours', 'Point de vue panoramique'],
     apresRide: 'Grand bol de soupe chaude et bière locale partagée au clubhouse.',
     elevationProfile: [20, 35, 50, 45, 70, 60, 85, 70, 90, 65, 40, 20],
+    minElevationM: undefined as number | undefined,
+    maxElevationM: undefined as number | undefined,
     gpxFileName: '' as string | undefined,
     gpxFileSize: '' as string | undefined,
     gpxData: '' as string | undefined,
@@ -66,6 +68,8 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
         highlights: rideToEdit.highlights || [],
         apresRide: rideToEdit.apresRide,
         elevationProfile: rideToEdit.elevationProfile || [20, 40, 60, 80, 50, 30, 15],
+        minElevationM: rideToEdit.minElevationM,
+        maxElevationM: rideToEdit.maxElevationM,
         gpxFileName: rideToEdit.gpxFileName || '',
         gpxFileSize: rideToEdit.gpxFileSize || '',
         gpxData: rideToEdit.gpxData || '',
@@ -94,6 +98,8 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
         highlights: ['Singletracks forestiers techniques', 'Atelier pilotage à mi-parcours', 'Pause espresso'],
         apresRide: 'Grand bol de soupe chaude et bière d’abbaye locale partagée.',
         elevationProfile: [20, 35, 55, 45, 75, 60, 90, 70, 50, 30, 20],
+        minElevationM: undefined,
+        maxElevationM: undefined,
         gpxFileName: '',
         gpxFileSize: '',
         gpxData: '',
@@ -378,14 +384,15 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                Capacité Max (Riders)
+                Jauge indicative du peloton
               </label>
               <input
                 type="number"
                 value={formData.maxParticipants}
                 onChange={(e) => setFormData({ ...formData, maxParticipants: Number(e.target.value) })}
-                className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-orange-500"
               />
+              <span className="text-[10px] text-stone-500 mt-1 block">Sortie ouverte à tous sans limite stricte</span>
             </div>
           </div>
 
@@ -498,10 +505,12 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
                 setFormData((prev) => ({
                   ...prev,
                   elevationProfile: extracted.elevationProfile,
+                  minElevationM: extracted.minElevationM,
+                  maxElevationM: extracted.maxElevationM,
                   // NOTE: formData.elevationM & distanceKm are preserved as entered manually by the user
                 }));
                 setGpxSyncNotice(
-                  `Courbe de profil altimétrique générée d'après la trace GPX pour le graphique de relief. Votre dénivelé officiel reste celui saisi manuellement (${formData.elevationM}m D+).`
+                  `Courbe de profil altimétrique générée d'après la trace GPX (100 points ultra-précis). Votre dénivelé officiel reste celui saisi manuellement (${formData.elevationM}m D+).`
                 );
               }}
             />
@@ -528,7 +537,7 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{rideToEdit ? 'Enregistrer les modifications' : 'Créer l’activité'}</span>

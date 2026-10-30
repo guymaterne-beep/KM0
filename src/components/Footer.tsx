@@ -51,27 +51,27 @@ export default function Footer({ onOpenAdminLogin }: FooterProps) {
             </h4>
             <ul className="space-y-2 text-stone-600">
               <li>
-                <a href="#club-concept" className="hover:text-amber-700 transition-colors">
+                <a href="#club-concept" className="hover:text-orange-600 transition-colors">
                   VTT Hiver (Novembre — Février)
                 </a>
               </li>
               <li>
-                <a href="#club-concept" className="hover:text-amber-700 transition-colors">
+                <a href="#club-concept" className="hover:text-orange-600 transition-colors">
                   Gravel des Bocages (Printemps &amp; Automne)
                 </a>
               </li>
               <li>
-                <a href="#club-concept" className="hover:text-amber-700 transition-colors">
+                <a href="#club-concept" className="hover:text-orange-600 transition-colors">
                   Route &amp; Pavés Flandriens (Été)
                 </a>
               </li>
               <li>
-                <a href="#calendrier" className="hover:text-amber-700 transition-colors">
+                <a href="#calendrier" className="hover:text-orange-600 transition-colors">
                   Calendrier des Sorties Hebdos
                 </a>
               </li>
               <li>
-                <a href="#niveaux" className="hover:text-amber-700 transition-colors">
+                <a href="#niveaux" className="hover:text-orange-600 transition-colors">
                   Échelle des Niveaux (T1-T5 / P1-P5)
                 </a>
               </li>
@@ -85,27 +85,27 @@ export default function Footer({ onOpenAdminLogin }: FooterProps) {
             </h4>
             <ul className="space-y-2 text-stone-600">
               <li>
-                <a href="#voyages" className="hover:text-amber-700 transition-colors">
+                <a href="#voyages" className="hover:text-orange-600 transition-colors">
                   Ardennes Epic Bikepacking
                 </a>
               </li>
               <li>
-                <a href="#voyages" className="hover:text-amber-700 transition-colors">
+                <a href="#voyages" className="hover:text-orange-600 transition-colors">
                   Trans-Suisse Romande &amp; Hauteville
                 </a>
               </li>
               <li>
-                <a href="#voyages" className="hover:text-amber-700 transition-colors">
+                <a href="#voyages" className="hover:text-orange-600 transition-colors">
                   Stage d’Affûtage Majorque
                 </a>
               </li>
               <li>
-                <a href="#voyages" className="hover:text-amber-700 transition-colors">
+                <a href="#voyages" className="hover:text-orange-600 transition-colors">
                   Masterclass Pilotage VTT d’Hiver
                 </a>
               </li>
               <li>
-                <a href="#adhesion" className="hover:text-amber-700 transition-colors">
+                <a href="#adhesion" className="hover:text-orange-600 transition-colors">
                   Tarifs &amp; Formules d’Adhésion
                 </a>
               </li>

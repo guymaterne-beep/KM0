@@ -239,9 +239,9 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
         <div className="flex gap-2 border-b border-stone-200 pb-px overflow-x-auto">
           <button
             onClick={() => setActiveTab('rides')}
-            className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'rides'
-                ? 'border-amber-500 text-stone-900'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
@@ -254,9 +254,9 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
 
           <button
             onClick={() => setActiveTab('trips')}
-            className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'trips'
-                ? 'border-amber-500 text-stone-900'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
@@ -266,16 +266,16 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
 
           <button
             onClick={() => setActiveTab('receipts')}
-            className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'receipts'
-                ? 'border-amber-500 text-stone-900'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
             <CreditCard className="w-4 h-4" />
             <span>Cotisations & Reçus de Paiement</span>
             {memberTxs.length > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-xs bg-amber-100 text-amber-800">
+              <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800 font-bold">
                 {memberTxs.length}
               </span>
             )}
@@ -283,9 +283,9 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
 
           <button
             onClick={() => setActiveTab('profile')}
-            className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all ${
+            className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'profile'
-                ? 'border-amber-500 text-stone-900'
+                ? 'border-orange-500 text-orange-600'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
@@ -449,7 +449,7 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
 
                         <button
                           onClick={onClose}
-                          className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-xs transition-colors cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-colors cursor-pointer"
                         >
                           Fiche séjour
                         </button>
@@ -643,7 +643,7 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
 
               <button
                 type="submit"
-                className="py-3 px-6 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-bold text-sm shadow-md transition-all cursor-pointer"
+                className="py-3 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
               >
                 Enregistrer les modifications
               </button>

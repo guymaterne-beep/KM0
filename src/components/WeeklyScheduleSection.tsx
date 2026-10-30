@@ -7,7 +7,7 @@ export default function WeeklyScheduleSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-700 mb-2">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1e2f47] mb-2">
               <Calendar className="w-3.5 h-3.5" />
               <span>La Routine du Club</span>
             </div>
@@ -24,11 +24,11 @@ export default function WeeklyScheduleSection() {
           {WEEKLY_SCHEDULE.map((slot, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-2xl bg-stone-50 border border-stone-200 hover:border-amber-400 hover:shadow-sm transition-all flex flex-col justify-between"
+              className="p-6 rounded-2xl bg-stone-50 border border-stone-200 hover:border-[#1e2f47] hover:shadow-sm transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-4">
-                  <span className="font-display text-lg font-black uppercase text-amber-800 tracking-wider">
+                  <span className="font-display text-lg font-black uppercase text-[#1e2f47] tracking-wider">
                     {slot.day}
                   </span>
                   <span className="text-[11px] font-mono font-bold text-stone-700 bg-white px-2 py-0.5 rounded border border-stone-200 shadow-2xs">
@@ -36,7 +36,7 @@ export default function WeeklyScheduleSection() {
                   </span>
                 </div>
 
-                <div className="text-xs text-amber-700 font-semibold mb-2">
+                <div className="text-xs text-[#1e2f47] font-semibold mb-2">
                   {slot.seasonContext}
                 </div>
 

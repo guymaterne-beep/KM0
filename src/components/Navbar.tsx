@@ -47,37 +47,37 @@ export default function Navbar({
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 font-medium">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-amber-700 font-extrabold tracking-wider uppercase text-[11px]">
+            <span className="text-[#1e2f47] font-extrabold tracking-wider uppercase text-[11px]">
               Saison Active :
             </span>
-            <span className="text-stone-900 font-semibold hidden sm:inline">
+            <span className="text-slate-900 font-semibold hidden sm:inline">
               VTT Hivernal en Ardennes &amp; Brabant
             </span>
-            <span className="text-stone-900 font-semibold sm:hidden">VTT Hiver</span>
-            <span className="text-stone-400 hidden md:inline">·</span>
-            <span className="hidden md:inline text-stone-600">
+            <span className="text-slate-900 font-semibold sm:hidden">VTT Hiver</span>
+            <span className="text-slate-400 hidden md:inline">·</span>
+            <span className="hidden md:inline text-slate-600">
               Gravel &amp; Route au retour du printemps
             </span>
           </div>
 
-          <div className="flex items-center gap-3.5 text-[11px] text-stone-600">
+          <div className="flex items-center gap-3.5 text-[11px] text-slate-600">
             <button
               onClick={onOpenQuiz}
-              className="text-stone-700 hover:text-amber-700 font-medium transition-colors flex items-center gap-1 cursor-pointer"
+              className="text-slate-700 hover:text-[#1e2f47] font-medium transition-colors flex items-center gap-1 cursor-pointer"
             >
-              <Award className="w-3.5 h-3.5 text-amber-600" />
+              <Award className="w-3.5 h-3.5 text-blue-600" />
               <span>Calculer mon niveau KM0</span>
             </button>
 
-            <span className="text-stone-300 hidden sm:inline">|</span>
+            <span className="text-slate-300 hidden sm:inline">|</span>
 
             {/* Member Portal Link in Top Bar */}
             {currentMember ? (
               <button
                 onClick={onOpenMemberPortal}
-                className="text-amber-900 hover:text-amber-950 font-bold flex items-center gap-1 cursor-pointer bg-amber-200/70 hover:bg-amber-300 px-2 py-0.5 rounded transition-colors"
+                className="text-[#1e2f47] hover:text-[#152336] font-bold flex items-center gap-1 cursor-pointer bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-0.5 rounded transition-colors"
               >
-                <UserCheck className="w-3 h-3 text-amber-800" />
+                <UserCheck className="w-3 h-3 text-[#1e2f47]" />
                 <span>Espace Membre ({currentMember.firstName})</span>
               </button>
             ) : (
@@ -160,7 +160,7 @@ export default function Navbar({
               <a
                 key={link.href}
                 href={link.href}
-                className="text-slate-700 hover:text-sky-700 text-sm font-semibold tracking-wide transition-colors py-1 relative hover:after:w-full after:w-0 after:h-0.5 after:bg-sky-500 after:absolute after:bottom-0 after:left-0 after:transition-all"
+                className="text-slate-700 hover:text-[#1e2f47] text-sm font-semibold tracking-wide transition-colors py-1 relative hover:after:w-full after:w-0 after:h-0.5 after:bg-[#1e2f47] after:absolute after:bottom-0 after:left-0 after:transition-all"
               >
                 {link.label}
               </a>
@@ -173,9 +173,9 @@ export default function Navbar({
             {currentMember ? (
               <button
                 onClick={onOpenMemberPortal}
-                className="px-3.5 py-2 text-xs font-bold text-sky-950 bg-sky-100 hover:bg-sky-200 border border-sky-300 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+                className="px-3.5 py-2 text-xs font-bold text-[#1e2f47] bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
               >
-                <UserCheck className="w-3.5 h-3.5 text-sky-700" />
+                <UserCheck className="w-3.5 h-3.5 text-[#1e2f47]" />
                 <span>Mon Espace ({currentMember.firstName})</span>
               </button>
             ) : (
@@ -200,9 +200,9 @@ export default function Navbar({
 
             <button
               onClick={onOpenMembership}
-              className="px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#162438] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5 border border-sky-400/40"
+              className="px-4 py-2 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5"
             >
-              <Bike className="w-3.5 h-3.5 text-sky-400" />
+              <Bike className="w-3.5 h-3.5 text-white" />
               <span>Rejoindre le Club</span>
             </button>
           </div>
@@ -211,7 +211,7 @@ export default function Navbar({
           <div className="flex lg:hidden items-center gap-2">
             <button
               onClick={onOpenMembership}
-              className="sm:hidden px-3 py-1.5 text-xs font-bold uppercase text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-lg"
+              className="sm:hidden px-3 py-1.5 text-xs font-bold uppercase text-white bg-[#1e2f47] hover:bg-[#152336] rounded-lg"
             >
               Club
             </button>
@@ -235,7 +235,7 @@ export default function Navbar({
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-stone-800 hover:text-amber-700 py-2 text-base font-semibold border-b border-stone-100"
+                className="text-stone-800 hover:text-[#1e2f47] py-2 text-base font-semibold border-b border-stone-100"
               >
                 {link.label}
               </a>
@@ -247,9 +247,9 @@ export default function Navbar({
                     setMobileMenuOpen(false);
                     onOpenMemberPortal();
                   }}
-                  className="w-full py-2.5 text-center text-xs font-bold uppercase text-amber-950 bg-amber-100 border border-amber-300 rounded-xl flex items-center justify-center gap-2"
+                  className="w-full py-2.5 text-center text-xs font-bold uppercase text-[#1e2f47] bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-center gap-2"
                 >
-                  <UserCheck className="w-4 h-4 text-amber-700" />
+                  <UserCheck className="w-4 h-4 text-[#1e2f47]" />
                   <span>Mon Espace Membre ({currentMember.firstName})</span>
                 </button>
               ) : (
@@ -282,7 +282,7 @@ export default function Navbar({
                   setMobileMenuOpen(false);
                   onOpenMembership();
                 }}
-                className="w-full py-3 text-center text-xs font-extrabold uppercase text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-md flex items-center justify-center gap-2"
+                className="w-full py-3 text-center text-xs font-extrabold uppercase text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-md flex items-center justify-center gap-2"
               >
                 <Bike className="w-4 h-4" />
                 <span>Adhérer au Club KM0 Belgique</span>

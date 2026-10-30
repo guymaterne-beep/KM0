@@ -247,9 +247,9 @@ export default function GpxUploadField({
       {hasFile ? (
         <div className="space-y-3">
           {/* File Card */}
-          <div className="p-4 bg-amber-50/40 rounded-xl border border-amber-300/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="p-4 bg-orange-50/40 rounded-xl border border-orange-300/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-800 flex items-center justify-center shrink-0 border border-amber-300">
+              <div className="w-10 h-10 rounded-xl bg-orange-400/20 text-orange-800 flex items-center justify-center shrink-0 border border-orange-300">
                 <span className="font-mono text-xs font-black">GPX</span>
               </div>
               <div className="min-w-0">
@@ -275,7 +275,7 @@ export default function GpxUploadField({
                 className="px-3 py-1.5 text-xs font-bold bg-white text-stone-800 hover:bg-stone-50 border border-stone-300 rounded-lg shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="Tester le téléchargement du fichier"
               >
-                <FileDown className="w-3.5 h-3.5 text-amber-600" />
+                <FileDown className="w-3.5 h-3.5 text-orange-600" />
                 <span>Tester téléchargement</span>
               </button>
               <button
@@ -302,7 +302,7 @@ export default function GpxUploadField({
             <div className="p-4 bg-white rounded-xl border border-stone-200 shadow-xs space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800">
+                  <div className="p-1.5 rounded-lg bg-orange-100 text-orange-800">
                     <TrendingUp className="w-4 h-4" />
                   </div>
                   <div>
@@ -322,7 +322,7 @@ export default function GpxUploadField({
                     className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all flex items-center gap-1.5 cursor-pointer ${
                       hasAppliedProfile
                         ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                        : 'bg-amber-400 hover:bg-amber-300 text-stone-950 border-amber-500 shadow-xs'
+                        : 'bg-orange-500 hover:bg-orange-600 text-white border-orange-600 shadow-xs'
                     }`}
                   >
                     {hasAppliedProfile ? (
@@ -374,15 +374,15 @@ export default function GpxUploadField({
                   <svg viewBox="0 0 360 80" className="w-full h-full" preserveAspectRatio="none">
                     <defs>
                       <linearGradient id="gpxCurveGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.35" />
-                        <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.05" />
+                        <stop offset="0%" stopColor="#f97316" stopOpacity="0.35" />
+                        <stop offset="100%" stopColor="#f97316" stopOpacity="0.05" />
                       </linearGradient>
                     </defs>
                     <line x1="0" y1="20" x2="360" y2="20" stroke="#e5e7eb" strokeDasharray="3 3" />
                     <line x1="0" y1="40" x2="360" y2="40" stroke="#e5e7eb" strokeDasharray="3 3" />
                     <line x1="0" y1="60" x2="360" y2="60" stroke="#e5e7eb" strokeDasharray="3 3" />
                     <polygon points={previewSvg.area} fill="url(#gpxCurveGradient)" />
-                    <polyline points={previewSvg.polyline} fill="none" stroke="#d97706" strokeWidth="2.5" />
+                    <polyline points={previewSvg.polyline} fill="none" stroke="#ea580c" strokeWidth="2.5" />
                   </svg>
                   <div className="absolute left-2.5 bottom-1 text-[9px] text-stone-500 font-mono">
                     Départ : {extractedProfile.minElevationM}m
@@ -403,13 +403,13 @@ export default function GpxUploadField({
           onClick={() => fileInputRef.current?.click()}
           className={`p-6 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all ${
             isDragging
-              ? 'border-amber-500 bg-amber-50/60'
-              : 'border-stone-300 bg-stone-50/60 hover:bg-stone-100 hover:border-amber-400'
+              ? 'border-orange-500 bg-orange-50/60'
+              : 'border-stone-300 bg-stone-50/60 hover:bg-stone-100 hover:border-orange-400'
           }`}
         >
-          <UploadCloud className="w-8 h-8 text-amber-600 mx-auto mb-2" />
+          <UploadCloud className="w-8 h-8 text-orange-600 mx-auto mb-2" />
           <p className="text-xs font-bold text-stone-900 mb-1">
-            Glissez-déposez votre fichier GPX ici, ou <span className="text-amber-700 underline">parcourez vos dossiers</span>
+            Glissez-déposez votre fichier GPX ici, ou <span className="text-orange-700 underline">parcourez vos dossiers</span>
           </p>
           <p className="text-[11px] text-stone-500 max-w-sm mx-auto mb-3">
             Fichier .gpx officiel. L'altimétrie et le profil de dénivelé seront calculés automatiquement.
@@ -421,7 +421,7 @@ export default function GpxUploadField({
               onClick={handleGenerateDefault}
               className="px-3.5 py-1.5 text-xs font-semibold bg-white hover:bg-stone-50 text-stone-700 border border-stone-300 rounded-lg shadow-xs flex items-center gap-1.5 mx-auto transition-colors cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <Sparkles className="w-3.5 h-3.5 text-orange-600" />
               <span>Générer automatiquement une trace &amp; profil modèle KM0 pour cette sortie</span>
             </button>
           </div>

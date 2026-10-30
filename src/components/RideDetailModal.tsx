@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { Ride } from '../data/rides';
 import { PaymentTransaction } from '../data/club';
@@ -19,9 +19,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Maximize2,
+  Users,
 } from 'lucide-react';
 import { PaymentCheckoutModal } from './payment/PaymentCheckoutModal';
-import { downloadGpxFile } from '../utils/gpxHelper';
+import { downloadGpxFile, extractElevationProfileFromGpx } from '../utils/gpxHelper';
 
 interface RideDetailModalProps {
   ride: Ride | null;
@@ -64,10 +65,13 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
     }
   }, [currentMember]);
 
+  const [hoverPoint, setHoverPoint] = useState<{ x: number; y: number; distKm: number; eleM: number } | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.isMember) {
-      // Non-member: open checkout modal for 15€ discovery ride ticket
+      // Non-member: open checkout modal for 3€ discovery ride ticket
       setIsCheckoutOpen(true);
       return;
     }
@@ -134,18 +138,50 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
     );
   };
 
-  // SVG elevation profile calculation
+  // Extract true high-resolution profile from GPX if present, or use high-res profile array
+  const gpxExt = useMemo(() => {
+    if (ride.gpxData && ride.gpxData.trim().length > 10) {
+      const res = extractElevationProfileFromGpx(ride.gpxData);
+      if (res.valid && res.elevationProfile.length > 5) {
+        return res;
+      }
+    }
+    return null;
+  }, [ride.gpxData]);
+
+  const elevProfile = gpxExt ? gpxExt.elevationProfile : (ride.elevationProfile || [15, 30, 50, 70, 85, 60, 40, 20]);
+  const minAlt = gpxExt?.minElevationM ?? (ride.minElevationM ?? 110);
+  const maxAlt = gpxExt?.maxElevationM ?? (ride.maxElevationM ?? (110 + ride.elevationM));
+
   const maxElev = 100;
-  const elevProfile = ride.elevationProfile || [15, 30, 50, 70, 85, 60, 40, 20];
   const points = elevProfile
     .map((val, idx) => {
       const x = (idx / (elevProfile.length - 1)) * 500;
-      const y = 140 - (val / maxElev) * 110;
-      return `${x},${y}`;
+      const y = 140 - (val / maxElev) * 115;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(' ');
 
   const areaPoints = `0,140 ${points} 500,140`;
+
+  const handleSvgMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const rect = svg.getBoundingClientRect();
+    const clientX = e.clientX - rect.left;
+    const svgX = Math.max(0, Math.min(500, (clientX / rect.width) * 500));
+    const ratio = svgX / 500;
+    const distKm = Math.round(ratio * ride.distanceKm * 10) / 10;
+    const sampleIdx = Math.min(elevProfile.length - 1, Math.round(ratio * (elevProfile.length - 1)));
+    const normVal = elevProfile[sampleIdx];
+    const svgY = 140 - (normVal / maxElev) * 115;
+    const eleM = Math.round(minAlt + (normVal / 100) * (maxAlt - minAlt));
+    setHoverPoint({ x: svgX, y: svgY, distKm, eleM });
+  };
+
+  const handleSvgMouseLeave = () => {
+    setHoverPoint(null);
+  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6">
@@ -214,71 +250,143 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
           </div>
 
           {/* Key Metrics Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-stone-50 border border-stone-200">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
             <div>
-              <span className="text-[11px] uppercase tracking-wider text-stone-500 font-medium">Distance</span>
-              <p className="font-display text-2xl font-black text-stone-900">{ride.distanceKm} km</p>
+              <span className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Distance</span>
+              <p className="font-display text-2xl font-black text-slate-900">{ride.distanceKm} km</p>
             </div>
             <div>
-              <span className="text-[11px] uppercase tracking-wider text-stone-500 font-medium">Dénivelé Positif</span>
-              <p className="font-display text-2xl font-black text-amber-700">+{ride.elevationM} m</p>
+              <span className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Dénivelé Positif</span>
+              <p className="font-display text-2xl font-black text-[#1e2f47]">+{ride.elevationM} m</p>
             </div>
             <div>
-              <span className="text-[11px] uppercase tracking-wider text-stone-500 font-medium">Niveau Technique</span>
-              <p className="font-display text-2xl font-black text-stone-900">T{ride.technicalLevel} / 5</p>
+              <span className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Niveau Technique</span>
+              <p className="font-display text-2xl font-black text-slate-900">T{ride.technicalLevel} / 5</p>
             </div>
             <div>
-              <span className="text-[11px] uppercase tracking-wider text-stone-500 font-medium">Niveau Physique</span>
-              <p className="font-display text-2xl font-black text-stone-900">P{ride.physicalLevel} / 5</p>
+              <span className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Niveau Physique</span>
+              <p className="font-display text-2xl font-black text-slate-900">P{ride.physicalLevel} / 5</p>
             </div>
           </div>
 
-          {/* Elevation Profile Graphic */}
-          <div className="p-5 rounded-2xl bg-stone-50 border border-stone-200">
+          {/* Precision Elevation Profile Graphic */}
+          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3 text-xs">
               <div className="flex items-center gap-2">
-                <Gauge className="w-4 h-4 text-amber-600" />
-                <span className="font-bold text-stone-900 uppercase tracking-wider">
-                  Profil Altimétrique &amp; Relief
+                <Gauge className="w-4 h-4 text-[#1e2f47]" />
+                <span className="font-bold text-slate-900 uppercase tracking-wider">
+                  Profil Altimétrique &amp; Relief GPX Haute Précision
                 </span>
                 {ride.gpxFileName && (
-                  <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
-                    GPX certifié
+                  <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold bg-blue-50 text-blue-950 px-2 py-0.5 rounded-full border border-blue-200">
+                    GPX Officiel ({elevProfile.length} points)
                   </span>
                 )}
               </div>
               <button
                 onClick={handleDownloadGpx}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold transition-all shadow-xs cursor-pointer text-xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1e2f47] hover:bg-[#152336] text-white font-bold transition-all shadow-xs cursor-pointer text-xs"
                 title={ride.gpxFileName ? `Télécharger ${ride.gpxFileName}` : 'Télécharger la trace GPX'}
               >
-                <FileDown className="w-3.5 h-3.5 text-stone-950" />
+                <FileDown className="w-3.5 h-3.5" />
                 <span>
                   {ride.gpxFileName
-                    ? `Télécharger ${ride.gpxFileName} (${ride.gpxFileSize || 'GPX'})`
+                    ? `Télécharger ${ride.gpxFileName}`
                     : 'Télécharger la trace GPX officielle'}
                 </span>
               </button>
             </div>
 
-            <div className="w-full h-36 relative bg-white rounded-xl p-2 border border-stone-200/80">
-              <svg viewBox="0 0 500 140" className="w-full h-full" preserveAspectRatio="none">
+            {/* Interactive SVG Chart */}
+            <div className="relative w-full h-44 bg-white rounded-xl p-3 border border-slate-200 shadow-xs select-none">
+              {/* Altitude Scale Badges */}
+              <div className="absolute top-2 left-3 text-[10px] font-mono text-slate-500 font-bold bg-white/90 px-1.5 py-0.5 rounded border border-slate-200">
+                Max : {maxAlt} m
+              </div>
+              <div className="absolute bottom-6 left-3 text-[10px] font-mono text-slate-500 font-bold bg-white/90 px-1.5 py-0.5 rounded border border-slate-200">
+                Min : {minAlt} m
+              </div>
+              <div className="absolute top-2 right-3 text-[10px] font-mono text-[#1e2f47] font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                D+ : +{ride.elevationM} m
+              </div>
+
+              <svg
+                ref={svgRef}
+                viewBox="0 0 500 140"
+                className="w-full h-full cursor-crosshair overflow-visible"
+                preserveAspectRatio="none"
+                onMouseMove={handleSvgMouseMove}
+                onMouseLeave={handleSvgMouseLeave}
+              >
                 <defs>
-                  <linearGradient id="elevGradLight" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.4" />
-                    <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.05" />
+                  <linearGradient id="elevGradNavy" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#1e2f47" stopOpacity="0.38" />
+                    <stop offset="50%" stopColor="#1e2f47" stopOpacity="0.15" />
+                    <stop offset="100%" stopColor="#1e2f47" stopOpacity="0.02" />
                   </linearGradient>
                 </defs>
-                <line x1="0" y1="35" x2="500" y2="35" stroke="#e5e5e5" strokeDasharray="3 3" />
-                <line x1="0" y1="70" x2="500" y2="70" stroke="#e5e5e5" strokeDasharray="3 3" />
-                <line x1="0" y1="105" x2="500" y2="105" stroke="#e5e5e5" strokeDasharray="3 3" />
-                <polygon points={areaPoints} fill="url(#elevGradLight)" />
-                <polyline points={points} fill="none" stroke="#d97706" strokeWidth="2.5" />
+
+                {/* Horizontal guide grids */}
+                <line x1="0" y1="30" x2="500" y2="30" stroke="#f1f5f9" strokeDasharray="3 3" />
+                <line x1="0" y1="65" x2="500" y2="65" stroke="#f1f5f9" strokeDasharray="3 3" />
+                <line x1="0" y1="100" x2="500" y2="100" stroke="#f1f5f9" strokeDasharray="3 3" />
+
+                {/* Filled profile polygon */}
+                <polygon points={areaPoints} fill="url(#elevGradNavy)" />
+
+                {/* Precise profile line */}
+                <polyline
+                  points={points}
+                  fill="none"
+                  stroke="#1e2f47"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {/* Interactive cursor line & indicator */}
+                {hoverPoint && (
+                  <g>
+                    <line
+                      x1={hoverPoint.x}
+                      y1="10"
+                      x2={hoverPoint.x}
+                      y2="140"
+                      stroke="#1e2f47"
+                      strokeWidth="1.5"
+                      strokeDasharray="2 2"
+                    />
+                    <circle
+                      cx={hoverPoint.x}
+                      cy={hoverPoint.y}
+                      r="5"
+                      fill="#1e2f47"
+                      stroke="#ffffff"
+                      strokeWidth="2"
+                    />
+                  </g>
+                )}
               </svg>
+
+              {/* Floating Tooltip following hover */}
+              {hoverPoint && (
+                <div
+                  className="absolute pointer-events-none -top-1 bg-slate-900 text-white text-[11px] font-bold px-2 py-1 rounded-md shadow-lg border border-sky-400 transform -translate-x-1/2 flex items-center gap-1.5 z-30"
+                  style={{ left: `${(hoverPoint.x / 500) * 100}%` }}
+                >
+                  <span className="text-sky-300 font-mono">Km {hoverPoint.distKm}</span>
+                  <span>·</span>
+                  <span className="text-white font-mono">{hoverPoint.eleM} m</span>
+                </div>
+              )}
             </div>
-            <div className="flex justify-between text-[11px] text-stone-500 mt-2 font-mono">
+
+            {/* Distance Axis Checkpoints */}
+            <div className="flex justify-between text-[11px] text-slate-500 mt-2 font-mono">
               <span>0 km (Départ)</span>
-              <span>{Math.round(ride.distanceKm / 2)} km (Mi-parcours)</span>
+              <span>{Math.round(ride.distanceKm * 0.25)} km</span>
+              <span>{Math.round(ride.distanceKm * 0.5)} km (Mi-parcours)</span>
+              <span>{Math.round(ride.distanceKm * 0.75)} km</span>
               <span>{ride.distanceKm} km (Arrivée)</span>
             </div>
           </div>
@@ -286,25 +394,25 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
           {/* Description & Highlights */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
-              <h3 className="font-display text-xl font-bold uppercase text-stone-950">
+              <h3 className="font-display text-xl font-bold uppercase text-slate-950">
                 À propos de cette sortie
               </h3>
-              <p className="text-stone-700 text-sm leading-relaxed">
+              <p className="text-slate-700 text-sm leading-relaxed">
                 {ride.description}
               </p>
 
-              <div className="p-4 rounded-xl bg-stone-50 border border-stone-200">
-                <h4 className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <h4 className="text-xs font-bold text-[#1e2f47] uppercase tracking-wider mb-2">
                   Lieu de Rassemblement
                 </h4>
-                <p className="text-xs text-stone-700 mb-2">{ride.startAddress}</p>
+                <p className="text-xs text-slate-700 mb-2">{ride.startAddress}</p>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
                     ride.startAddress
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-amber-700 hover:underline flex items-center gap-1 font-bold"
+                  className="text-xs text-[#1e2f47] hover:text-blue-700 hover:underline flex items-center gap-1 font-bold"
                 >
                   <MapPin className="w-3.5 h-3.5" />
                   <span>Ouvrir dans Google Maps</span>
@@ -313,42 +421,43 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
             </div>
 
             <div className="space-y-4">
-              <h3 className="font-display text-xl font-bold uppercase text-stone-950">
+              <h3 className="font-display text-xl font-bold uppercase text-slate-950">
                 Points forts &amp; Esprit Belge
               </h3>
               <ul className="space-y-2.5">
                 {(ride.highlights || []).map((h, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-xs text-stone-700">
-                    <CheckCircle2 className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <li key={i} className="flex items-start gap-2.5 text-xs text-slate-700">
+                    <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                     <span>{h}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
-                <h4 className="text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">
+              <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-200">
+                <h4 className="text-xs font-bold text-[#1e2f47] uppercase tracking-wider mb-1">
                   Le Rituel Après-Ride
                 </h4>
-                <p className="text-xs text-amber-800 leading-relaxed">
+                <p className="text-xs text-slate-800 leading-relaxed">
                   {ride.apresRide}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 flex items-center justify-between text-xs">
-                <div>
-                  <span className="text-stone-500">Places restantes :</span>
-                  <span className="text-stone-950 font-bold ml-1.5">
-                    {ride.maxParticipants - ride.registeredCount} sur {ride.maxParticipants}
-                  </span>
+              {/* Attendees count - No limit */}
+              <div className="p-4 rounded-xl bg-blue-50/50 border border-blue-200 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 border border-blue-200 flex items-center justify-center text-[#1e2f47]">
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block text-[11px]">Cyclistes inscrits :</span>
+                    <span className="text-slate-950 font-bold text-sm">
+                      {ride.registeredCount} participant{ride.registeredCount > 1 ? 's' : ''}
+                    </span>
+                  </div>
                 </div>
-                <div className="w-28 bg-stone-200 h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-amber-500 h-full rounded-full"
-                    style={{
-                      width: `${(ride.registeredCount / ride.maxParticipants) * 100}%`,
-                    }}
-                  />
-                </div>
+                <span className="text-[11px] font-bold text-[#1e2f47] bg-blue-100 px-3 py-1.5 rounded-full border border-blue-200">
+                  Ouvert à tous · Sans limite
+                </span>
               </div>
             </div>
           </div>
@@ -412,14 +521,14 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                 <div className="pt-2 flex flex-wrap justify-center gap-3">
                   <button
                     onClick={handleDownloadGpx}
-                    className="px-4 py-2 text-xs font-bold bg-white text-stone-800 hover:bg-stone-50 border border-stone-300 rounded-xl flex items-center gap-1.5 cursor-pointer"
+                    className="px-4 py-2 text-xs font-bold bg-white text-slate-800 hover:bg-slate-50 border border-slate-300 rounded-xl flex items-center gap-1.5 cursor-pointer"
                   >
-                    <FileDown className="w-4 h-4 text-amber-600" />
+                    <FileDown className="w-4 h-4 text-[#1e2f47]" />
                     <span>Télécharger la trace GPX</span>
                   </button>
                   <button
                     onClick={onClose}
-                    className="px-5 py-2 text-xs font-bold uppercase text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl cursor-pointer"
+                    className="px-5 py-2 text-xs font-bold uppercase text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl cursor-pointer"
                   >
                     Fermer &amp; Voir les autres sorties
                   </button>
@@ -428,17 +537,17 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-display text-xl sm:text-2xl font-bold uppercase text-stone-950">
+                  <h3 className="font-display text-xl sm:text-2xl font-bold uppercase text-slate-950">
                     Réserver ma place dans le peloton
                   </h3>
-                  <span className="text-xs text-stone-500 font-medium">
-                    Gratuit pour les membres du Club KM0
+                  <span className="text-xs text-[#1e2f47] font-bold bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
+                    Gratuit pour les membres · 3 € non-membres
                   </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Prénom *
                     </label>
                     <input
@@ -447,11 +556,11 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                       placeholder="Ex: Philippe"
-                      className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Nom *
                     </label>
                     <input
@@ -460,14 +569,14 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                       value={formData.lastName}
                       onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                       placeholder="Ex: Gilbert"
-                      className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Adresse Email *
                     </label>
                     <input
@@ -476,11 +585,11 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="votre@email.be"
-                      className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Téléphone mobile *
                     </label>
                     <input
@@ -489,14 +598,14 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="+32 470 00 00 00"
-                      className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Modèle de vélo &amp; section de pneus
                     </label>
                     <input
@@ -504,17 +613,17 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                       value={formData.bikeModel}
                       onChange={(e) => setFormData({ ...formData, bikeModel: e.target.value })}
                       placeholder="Ex: VTT tout-suspendu 2.35 ou Gravel 45mm"
-                      className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-stone-700 mb-1">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Groupe d’allure souhaité
                     </label>
                     <select
                       value={formData.paceGroup}
                       onChange={(e) => setFormData({ ...formData, paceGroup: e.target.value })}
-                      className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500 font-medium"
+                      className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-[#1e2f47] font-medium"
                     >
                       <option value="tempo">Groupe Tempo / Convivial (rythme régulier)</option>
                       <option value="sport">Groupe Sportif (rythme soutenu)</option>
@@ -524,9 +633,9 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                 </div>
 
                 {!currentMember && (
-                  <div className="bg-stone-50 p-3.5 rounded-xl border border-stone-200">
-                    <div className="flex items-center gap-1.5 mb-1 text-xs font-bold text-stone-800">
-                      <Lock className="w-3.5 h-3.5 text-amber-600" />
+                  <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <div className="flex items-center gap-1.5 mb-1 text-xs font-bold text-slate-800">
+                      <Lock className="w-3.5 h-3.5 text-[#1e2f47]" />
                       <span>Mot de passe (optionnel pour sécuriser votre compte membre)</span>
                     </div>
                     <input
@@ -534,7 +643,7 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                       value={formData.password}
                       onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                       placeholder="Définir un mot de passe..."
-                      className="w-full px-3 py-2 text-sm bg-white border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:border-[#1e2f47]"
                     />
                   </div>
                 )}
@@ -545,33 +654,37 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
                     id="isMemberModal"
                     checked={formData.isMember}
                     onChange={(e) => setFormData({ ...formData, isMember: e.target.checked })}
-                    className="w-4 h-4 rounded text-amber-500 border-stone-300 focus:ring-0"
+                    className="w-4 h-4 rounded text-[#1e2f47] border-slate-300 focus:ring-0"
                   />
-                  <label htmlFor="isMemberModal" className="text-xs text-stone-600">
+                  <label htmlFor="isMemberModal" className="text-xs text-slate-700 font-medium">
                     Je suis déjà adhérent au club KM0 Belgique (Gratuit · 0 €)
                   </label>
                 </div>
 
                 <div className="pt-3 flex items-center justify-between">
-                  <span className="text-xs text-stone-500 font-medium">
-                    {formData.isMember ? 'Tarif Adhérent : Gratuit' : 'Tarif Pass Découverte : 15 €'}
+                  <span className="text-xs text-slate-500 font-medium">
+                    {formData.isMember ? (
+                      <span className="text-emerald-700 font-bold">Tarif Membre Club : Gratuit (0 €)</span>
+                    ) : (
+                      <span className="text-[#1e2f47] font-bold">Tarif Non-Membre : 3 €</span>
+                    )}
                   </span>
                   <div className="flex items-center gap-2.5">
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-4 py-2.5 text-xs font-semibold text-stone-600 hover:text-stone-900 cursor-pointer"
+                      className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
                     >
                       Annuler
                     </button>
                     <button
                       type="submit"
-                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center gap-1.5"
                     >
                       {!formData.isMember ? (
                         <>
                           <CreditCard className="w-3.5 h-3.5" />
-                          <span>Payer ma participation (15 €)</span>
+                          <span>Payer ma participation (3 €)</span>
                         </>
                       ) : (
                         <span>Confirmer mon Inscription (0 €)</span>
@@ -589,9 +702,9 @@ export default function RideDetailModal({ ride, onClose, onOpenPortal }: RideDet
         <PaymentCheckoutModal
           isOpen={isCheckoutOpen}
           onClose={() => setIsCheckoutOpen(false)}
-          amount={15}
+          amount={3}
           itemTitle={`Sortie Club : ${ride.title}`}
-          itemSubtitle={`${ride.date} à ${ride.time} - ${ride.discipline.toUpperCase()}`}
+          itemSubtitle={`${ride.date} à ${ride.time} - 3 € non-membre (Gratuit membres)`}
           targetType="ride"
           targetId={ride.id}
           customerName={`${formData.firstName} ${formData.lastName}`.trim()}

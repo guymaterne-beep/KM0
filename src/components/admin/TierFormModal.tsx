@@ -211,7 +211,7 @@ export default function TierFormModal({ isOpen, tierToEdit, onClose, onSave }: T
               <button
                 type="button"
                 onClick={addFeature}
-                className="px-4 py-2 text-xs font-bold bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl flex items-center gap-1 cursor-pointer"
+                className="px-4 py-2 text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white rounded-xl flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Ajouter</span>
@@ -280,7 +280,7 @@ export default function TierFormModal({ isOpen, tierToEdit, onClose, onSave }: T
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer font-bold"
             >
               <Save className="w-4 h-4" />
               <span>{tierToEdit ? 'Enregistrer le tarif' : 'Créer la formule'}</span>

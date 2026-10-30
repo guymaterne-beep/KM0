@@ -20,7 +20,9 @@ export interface Ride {
   description: string;
   highlights: string[];
   apresRide: string;
-  elevationProfile: number[]; // normalized 0-100 values
+  elevationProfile: number[]; // normalized 0-100 values (high-res 60-100 points)
+  minElevationM?: number;
+  maxElevationM?: number;
   featured?: boolean;
   gpxFileName?: string;
   gpxFileSize?: string;

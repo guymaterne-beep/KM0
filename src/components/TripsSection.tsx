@@ -45,8 +45,8 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
                 onClick={() => setFilterDiscipline(tab.id as any)}
                 className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
                   filterDiscipline === tab.id
-                    ? 'bg-amber-400 text-stone-950 shadow-xs'
-                    : 'text-stone-600 hover:text-stone-900'
+                    ? 'bg-orange-500 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {tab.label}
@@ -61,7 +61,7 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
             <div
               key={trip.id}
               onClick={() => onSelectTrip(trip)}
-              className="group p-6 sm:p-8 rounded-2xl bg-white border border-stone-200 hover:border-amber-400 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              className="group p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 hover:border-orange-500 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-4">
@@ -69,7 +69,7 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
                     <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-sky-100 text-sky-900 border border-sky-200">
                       {trip.country}
                     </span>
-                    <span className="text-stone-500 font-medium text-xs">
+                    <span className="text-slate-500 font-medium text-xs">
                       {trip.durationDays} jours
                     </span>
                     {trip.photos && trip.photos.length > 0 && (
@@ -77,7 +77,7 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
                         className="font-mono text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1"
                         title={`${trip.photos.length} photos du séjour`}
                       >
-                        <Camera className="w-3 h-3 text-sky-600" />
+                        <Camera className="w-3 h-3 text-orange-600" />
                         <span>{trip.photos.length}</span>
                       </span>
                     )}
@@ -94,23 +94,23 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
                   </span>
                 </div>
 
-                <h3 className="font-display text-2xl sm:text-3xl font-extrabold uppercase text-stone-950 mb-2 group-hover:text-amber-700 transition-colors">
+                <h3 className="font-display text-2xl sm:text-3xl font-extrabold uppercase text-slate-950 mb-2 group-hover:text-orange-600 transition-colors">
                   {trip.title}
                 </h3>
 
-                <p className="text-xs text-amber-800 font-bold mb-3">
+                <p className="text-xs text-orange-600 font-bold mb-3">
                   {trip.subtitle}
                 </p>
 
-                <p className="text-stone-600 text-xs sm:text-sm leading-relaxed mb-6">
+                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
                   {trip.coverDescription}
                 </p>
 
                 {/* Highlights bullets */}
                 <div className="space-y-2 mb-6">
                   {(trip.highlights || []).slice(0, 3).map((h, i) => (
-                    <div key={i} className="flex items-start gap-2 text-xs text-stone-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1.5" />
+                    <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-1.5" />
                       <span>{h}</span>
                     </div>
                   ))}
@@ -118,25 +118,25 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
               </div>
 
               {/* Bottom Meta & Price */}
-              <div className="pt-6 border-t border-stone-100 flex items-center justify-between">
+              <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
                 <div>
-                  <span className="text-[11px] text-stone-400 uppercase tracking-wider font-semibold block">
+                  <span className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold block">
                     Dates prévues
                   </span>
-                  <span className="text-xs font-bold text-stone-800">
+                  <span className="text-xs font-bold text-slate-800">
                     {trip.dates}
                   </span>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs text-stone-500 block">À partir de</span>
-                  <span className="font-display text-2xl sm:text-3xl font-black text-amber-600">
+                  <span className="text-xs text-slate-500 block">À partir de</span>
+                  <span className="font-display text-2xl sm:text-3xl font-black text-orange-600">
                     {trip.priceEuro} €
                   </span>
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-amber-700 group-hover:text-amber-800 font-bold">
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-orange-600 group-hover:text-orange-700 font-bold">
                 <span>Voir le programme complet &amp; réserver</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>

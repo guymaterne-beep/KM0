@@ -6,12 +6,12 @@ export default function BelgianSpirit() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 border border-amber-300 rounded-full text-amber-900 text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-100 border border-orange-300 rounded-full text-orange-950 text-xs font-bold uppercase tracking-wider mb-4">
             <span>Culture &amp; Convivialité</span>
           </div>
           <h2 className="font-display text-3xl sm:text-5xl font-extrabold uppercase text-stone-950 tracking-tight mb-4">
             L’Âme du Cyclisme Belge <br />
-            <span className="text-amber-600">&amp; la Rigueur KM0</span>
+            <span className="text-orange-600">&amp; la Rigueur KM0</span>
           </h2>
           <p className="text-stone-600 text-sm sm:text-base leading-relaxed">
             Ici, le vélo n’est pas un simple sport : c’est un patrimoine, une fierté nationale et une fête partagée.
@@ -25,34 +25,34 @@ export default function BelgianSpirit() {
           <div className="p-8 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col justify-between shadow-xs">
             <div>
               <div className="flex items-center gap-3.5 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-amber-500 text-stone-950 flex items-center justify-center font-display text-2xl font-black shadow-xs">
+                <div className="w-14 h-14 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-display text-2xl font-black shadow-xs">
                   GM
                 </div>
                 <div>
                   <h3 className="font-display text-2xl font-bold uppercase text-stone-950">
                     Guy Materne
                   </h3>
-                  <p className="text-xs text-amber-800 font-bold tracking-wide">
+                  <p className="text-xs text-orange-700 font-bold tracking-wide">
                     Référent Officiel Projet KM0 Belgique · Capitaine de Route
                   </p>
                 </div>
               </div>
 
-              <blockquote className="text-stone-700 text-sm leading-relaxed italic mb-6 border-l-3 border-amber-500 pl-4 py-1 font-medium">
+              <blockquote className="text-stone-700 text-sm leading-relaxed italic mb-6 border-l-3 border-orange-500 pl-4 py-1 font-medium">
                 « Quand j’ai découvert Projet KM0 en Suisse, j’ai été frappé par l’exactitude de leur méthode, le respect de la nature et l’humanité des séjours. Mon ambition en créant l’antenne belge est simple : apporter cette précision dans nos Ardennes, nos monts flandriens et nos plaines brabançonnes, avec la chaleur, l’humilité et la franche camaraderie qui font l’ADN du cyclisme en Belgique. »
               </blockquote>
 
               <div className="space-y-3 text-xs text-stone-700">
                 <div className="flex items-center gap-2.5">
-                  <Shield className="w-4 h-4 text-amber-600 shrink-0" />
+                  <Shield className="w-4 h-4 text-orange-600 shrink-0" />
                   <span>Encadrement certifié selon les standards officiels Projet KM0</span>
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <MapPin className="w-4 h-4 text-amber-600 shrink-0" />
+                  <MapPin className="w-4 h-4 text-orange-600 shrink-0" />
                   <span>Traces tracées sur le terrain, continuellement vérifiées et mises à jour</span>
                 </div>
                 <div className="flex items-center gap-2.5">
-                  <Users className="w-4 h-4 text-amber-600 shrink-0" />
+                  <Users className="w-4 h-4 text-orange-600 shrink-0" />
                   <span>Lien direct et passerelles d’échanges avec le camp de base suisse à Hauteville</span>
                 </div>
               </div>

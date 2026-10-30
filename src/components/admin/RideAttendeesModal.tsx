@@ -250,7 +250,7 @@ export default function RideAttendeesModal({
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0" />
             <span>
-              <strong>Confidentialité des membres :</strong> Cette liste nominative est strictement réservée à l'administrateur et aux capitaines de route. Les visiteurs du site public ne voient jamais les noms ni les identités des participants (uniquement le compteur des places restantes).
+              <strong>Confidentialité des membres :</strong> Cette liste nominative est strictement réservée à l'administrateur et aux capitaines de route. Les visiteurs du site public ne voient jamais les noms ni les identités des participants (uniquement le compteur d'inscrits).
             </span>
           </div>
         </div>
@@ -261,13 +261,13 @@ export default function RideAttendeesModal({
             <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Total Inscrits</span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span className="font-display text-2xl font-black text-stone-900">{rideRegistrations.length}</span>
-              <span className="text-xs text-stone-500 font-medium">/ {ride.maxParticipants} max</span>
+              <span className="text-xs text-orange-600 font-bold">(ouvert sans limite)</span>
             </div>
             <div className="w-full bg-stone-100 h-1.5 rounded-full mt-2 overflow-hidden">
               <div
-                className="bg-amber-500 h-full rounded-full"
+                className="bg-orange-500 h-full rounded-full"
                 style={{
-                  width: `${Math.min(100, (rideRegistrations.length / (ride.maxParticipants || 1)) * 100)}%`,
+                  width: `${Math.min(100, Math.max(15, rideRegistrations.length * 8))}%`,
                 }}
               />
             </div>
@@ -278,11 +278,11 @@ export default function RideAttendeesModal({
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="font-display text-2xl font-black text-emerald-700">{confirmedCount}</span>
               {pendingCount > 0 && (
-                <span className="text-[11px] font-bold text-amber-700">({pendingCount} en attente)</span>
+                <span className="text-[11px] font-bold text-orange-600">({pendingCount} en attente)</span>
               )}
             </div>
-            <span className="text-[11px] text-stone-500 mt-1 block">
-              {Math.max(0, ride.maxParticipants - rideRegistrations.length)} places encore disponibles
+            <span className="text-[11px] text-emerald-600 font-medium mt-1 block">
+              Sortie ouverte à tous · Sans limite
             </span>
           </div>
 
@@ -336,7 +336,7 @@ export default function RideAttendeesModal({
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="px-3 py-1.5 text-xs font-bold bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Inscrire un coureur</span>
@@ -347,7 +347,7 @@ export default function RideAttendeesModal({
               className="px-3 py-1.5 text-xs font-semibold bg-white hover:bg-stone-50 text-stone-700 border border-stone-300 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
               title="Envoyer un email groupé à tous les inscrits"
             >
-              <Mail className="w-3.5 h-3.5 text-amber-600" />
+              <Mail className="w-3.5 h-3.5 text-orange-600" />
               <span>Email au peloton</span>
             </button>
 
@@ -466,7 +466,7 @@ export default function RideAttendeesModal({
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 text-xs font-bold bg-amber-400 hover:bg-amber-300 text-stone-950 rounded-lg shadow-xs"
+                className="px-4 py-1.5 text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white rounded-lg shadow-xs cursor-pointer"
               >
                 Valider l'inscription
               </button>

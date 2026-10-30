@@ -106,7 +106,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
                         onClick={() => setAnswers({ ...answers, distanceAndTerrain: opt.val })}
                         className={`w-full p-3.5 rounded-xl text-left border transition-all cursor-pointer flex items-center justify-between ${
                           answers.distanceAndTerrain === opt.val
-                            ? 'bg-amber-50 border-amber-400 text-stone-950 ring-1 ring-amber-400/30'
+                            ? 'bg-blue-50 border-[#1e2f47] text-stone-950 ring-1 ring-[#1e2f47]/30'
                             : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'
                         }`}
                       >
@@ -117,7 +117,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
                         <div
                           className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
                             answers.distanceAndTerrain === opt.val
-                              ? 'border-amber-500 bg-amber-500'
+                              ? 'border-[#1e2f47] bg-[#1e2f47]'
                               : 'border-stone-300'
                           }`}
                         >
@@ -153,7 +153,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
                         onClick={() => setAnswers({ ...answers, handlingSkills: opt.val })}
                         className={`w-full p-3.5 rounded-xl text-left border transition-all cursor-pointer flex items-center justify-between ${
                           answers.handlingSkills === opt.val
-                            ? 'bg-amber-50 border-amber-400 text-stone-950 ring-1 ring-amber-400/30'
+                            ? 'bg-blue-50 border-[#1e2f47] text-stone-950 ring-1 ring-[#1e2f47]/30'
                             : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'
                         }`}
                       >
@@ -164,7 +164,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
                         <div
                           className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
                             answers.handlingSkills === opt.val
-                              ? 'border-amber-500 bg-amber-500'
+                              ? 'border-[#1e2f47] bg-[#1e2f47]'
                               : 'border-stone-300'
                           }`}
                         >
@@ -200,7 +200,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
                         onClick={() => setAnswers({ ...answers, climbingAndPace: opt.val })}
                         className={`w-full p-3.5 rounded-xl text-left border transition-all cursor-pointer flex items-center justify-between ${
                           answers.climbingAndPace === opt.val
-                            ? 'bg-amber-50 border-amber-400 text-stone-950 ring-1 ring-amber-400/30'
+                            ? 'bg-blue-50 border-[#1e2f47] text-stone-950 ring-1 ring-[#1e2f47]/30'
                             : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'
                         }`}
                       >
@@ -211,7 +211,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
                         <div
                           className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
                             answers.climbingAndPace === opt.val
-                              ? 'border-amber-500 bg-amber-500'
+                              ? 'border-[#1e2f47] bg-[#1e2f47]'
                               : 'border-stone-300'
                           }`}
                         >
@@ -240,7 +240,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
 
                 <button
                   onClick={handleNext}
-                  className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <span>{step === 3 ? 'Voir mon diagnostic' : 'Suivant'}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -251,12 +251,12 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
 
           {step === 4 && result && (
             <div className="space-y-6 text-center">
-              <div className="w-14 h-14 bg-amber-100 border border-amber-300 rounded-full flex items-center justify-center mx-auto text-amber-700">
+              <div className="w-14 h-14 bg-blue-100 border border-blue-200 rounded-full flex items-center justify-center mx-auto text-[#1e2f47]">
                 <Award className="w-7 h-7" />
               </div>
 
               <div>
-                <span className="text-xs uppercase tracking-widest text-amber-800 font-bold block mb-1">
+                <span className="text-xs uppercase tracking-widest text-[#1e2f47] font-bold block mb-1">
                   Votre Profil Cycliste KM0
                 </span>
                 <h3 className="font-display text-3xl font-black uppercase text-stone-950">
@@ -267,7 +267,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
               <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-stone-50 border border-stone-200 max-w-sm mx-auto">
                 <div className="flex flex-col items-center">
                   <span className="text-[10px] text-stone-500 uppercase font-mono font-bold mb-1">Niveau Technique</span>
-                  <div className="font-display text-3xl font-black text-amber-600">T{result.tech} / 5</div>
+                  <div className="font-display text-3xl font-black text-[#1e2f47]">T{result.tech} / 5</div>
                 </div>
                 <div className="flex flex-col items-center">
                   <span className="text-[10px] text-stone-500 uppercase font-mono font-bold mb-1">Niveau Physique</span>
@@ -285,7 +285,7 @@ export default function LevelQuizModal({ isOpen, onClose, onSelectGroup }: Level
                     onSelectGroup(result.group);
                     onClose();
                   }}
-                  className="w-full sm:w-auto px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-xs cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs cursor-pointer"
                 >
                   Voir les sorties adaptées à mon profil
                 </button>

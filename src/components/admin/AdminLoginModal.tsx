@@ -118,7 +118,7 @@ export default function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLog
             <div className="pt-2 flex flex-col gap-2.5">
               <button
                 type="submit"
-                className="w-full py-3 text-xs font-bold uppercase tracking-wider text-stone-950 bg-amber-400 hover:bg-amber-300 rounded-xl shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <Lock className="w-3.5 h-3.5" />
                 <span>Se Connecter au Back-Office</span>
@@ -129,7 +129,7 @@ export default function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLog
                 onClick={handleQuickLogin}
                 className="w-full py-2.5 text-xs font-semibold text-stone-700 bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                <Sparkles className="w-3.5 h-3.5 text-orange-600" />
                 <span>Connexion Rapide en 1-Clic (Guy Materne)</span>
               </button>
             </div>
