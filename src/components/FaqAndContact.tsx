@@ -45,7 +45,7 @@ export default function FaqAndContact() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* FAQ Column */}
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-orange-600 mb-2">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1e2f47] mb-2">
               <MessageSquare className="w-3.5 h-3.5" />
               <span>Questions Fréquentes</span>
             </div>
@@ -61,12 +61,12 @@ export default function FaqAndContact() {
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                    className="w-full p-4 text-left flex items-center justify-between gap-4 text-sm font-bold text-stone-900 hover:text-orange-600 transition-colors cursor-pointer"
+                    className="w-full p-4 text-left flex items-center justify-between gap-4 text-sm font-bold text-stone-900 hover:text-[#1e2f47] transition-colors cursor-pointer"
                   >
                     <span>{faq.q}</span>
                     <ChevronDown
                       className={`w-4 h-4 text-stone-400 shrink-0 transition-transform duration-200 ${
-                        openFaq === idx ? 'rotate-180 text-orange-600' : ''
+                        openFaq === idx ? 'rotate-180 text-[#1e2f47]' : ''
                       }`}
                     />
                   </button>
@@ -170,13 +170,13 @@ export default function FaqAndContact() {
                     value={contactForm.message}
                     onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                     placeholder="Dites-nous ce qui vous ferait plaisir..."
-                    className="w-full px-3.5 py-2.5 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2.5 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                  className="w-full py-3 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Envoyer ma Demande</span>

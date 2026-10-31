@@ -191,15 +191,15 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
               </div>
               <div className="flex justify-between items-center pt-2 border-t border-stone-200">
                 <span className="text-sm font-bold text-stone-900">Montant total</span>
-                <span className="text-lg font-black text-orange-600">{completedTx.amount} €</span>
+                <span className="text-lg font-black text-[#1e2f47]">{completedTx.amount} €</span>
               </div>
 
               {completedTx.structuredCommunication && (
-                <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="text-xs font-bold text-orange-950 mb-1">
+                <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="text-xs font-bold text-[#1e2f47] mb-1">
                     À mentionner impérativement sur votre virement :
                   </div>
-                  <div className="text-sm font-mono font-black text-orange-800 tracking-wider">
+                  <div className="text-sm font-mono font-black text-[#1e2f47] tracking-wider">
                     {completedTx.structuredCommunication}
                   </div>
                 </div>
@@ -209,7 +209,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 onClick={onClose}
-                className="flex-1 py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm transition-all shadow-md shadow-orange-500/20 cursor-pointer"
+                className="flex-1 py-3 px-4 rounded-xl bg-[#1e2f47] hover:bg-[#152336] text-white font-bold text-sm transition-all shadow-md shadow-[#1e2f47]/20 cursor-pointer"
               >
                 Accéder à mon Espace Membre
               </button>
@@ -218,9 +218,9 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
         ) : (
           <div className="p-6 space-y-6">
             {/* Summary Banner */}
-            <div className="flex items-start justify-between p-4 rounded-xl bg-orange-50/60 border border-orange-200/60">
+            <div className="flex items-start justify-between p-4 rounded-xl bg-blue-50/60 border border-blue-200/60">
               <div>
-                <span className="text-[11px] font-bold text-orange-700 uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-[#1e2f47] uppercase tracking-wider">
                   Récapitulatif de commande
                 </span>
                 <h4 className="text-base font-bold text-stone-900 mt-0.5">{itemTitle}</h4>
@@ -232,7 +232,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-2xl font-black text-orange-600">{amount} €</span>
+                <span className="text-2xl font-black text-[#1e2f47]">{amount} €</span>
                 <span className="block text-[11px] text-stone-500 font-medium">TTC</span>
               </div>
             </div>
@@ -248,11 +248,11 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   onClick={() => setActiveTab('stripe')}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all cursor-pointer ${
                     activeTab === 'stripe'
-                      ? 'border-orange-500 bg-orange-50/60 text-stone-900 font-bold shadow-sm'
+                      ? 'border-[#1e2f47] bg-blue-50/60 text-stone-900 font-bold shadow-sm'
                       : 'border-stone-200 hover:border-stone-300 text-stone-600 hover:bg-stone-50'
                   }`}
                 >
-                  <CreditCard className="w-5 h-5 mb-1.5 text-orange-600" />
+                  <CreditCard className="w-5 h-5 mb-1.5 text-[#1e2f47]" />
                   <span className="text-xs leading-tight">Carte / Apple Pay</span>
                   <span className="text-[10px] text-stone-400 font-normal">Stripe</span>
                 </button>
@@ -262,11 +262,11 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   onClick={() => setActiveTab('bancontact')}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all cursor-pointer ${
                     activeTab === 'bancontact'
-                      ? 'border-orange-500 bg-orange-50/60 text-stone-900 font-bold shadow-sm'
+                      ? 'border-[#1e2f47] bg-blue-50/60 text-stone-900 font-bold shadow-sm'
                       : 'border-stone-200 hover:border-stone-300 text-stone-600 hover:bg-stone-50'
                   }`}
                 >
-                  <Smartphone className="w-5 h-5 mb-1.5 text-orange-600" />
+                  <Smartphone className="w-5 h-5 mb-1.5 text-[#1e2f47]" />
                   <span className="text-xs leading-tight">Bancontact</span>
                   <span className="text-[10px] text-stone-400 font-normal">Payconiq QR</span>
                 </button>
@@ -276,7 +276,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   onClick={() => setActiveTab('wire')}
                   className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all cursor-pointer ${
                     activeTab === 'wire'
-                      ? 'border-orange-500 bg-orange-50/60 text-stone-900 font-bold shadow-sm'
+                      ? 'border-[#1e2f47] bg-blue-50/60 text-stone-900 font-bold shadow-sm'
                       : 'border-stone-200 hover:border-stone-300 text-stone-600 hover:bg-stone-50'
                   }`}
                 >
@@ -384,7 +384,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   type="button"
                   onClick={() => handleStripePay(false)}
                   disabled={isProcessing}
-                  className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition-all cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#1e2f47] hover:bg-[#152336] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#1e2f47]/25 transition-all cursor-pointer disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <div className="flex items-center gap-2">
@@ -420,7 +420,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   type="button"
                   onClick={handleBancontactPay}
                   disabled={isProcessing}
-                  className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition-all cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#1e2f47] hover:bg-[#152336] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#1e2f47]/25 transition-all cursor-pointer disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <div className="flex items-center gap-2">
@@ -512,7 +512,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   type="button"
                   onClick={handleWireTransferSubmit}
                   disabled={isProcessing}
-                  className="w-full py-3.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 transition-all cursor-pointer disabled:opacity-50"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#1e2f47] hover:bg-[#152336] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#1e2f47]/25 transition-all cursor-pointer disabled:opacity-50"
                 >
                   {isProcessing ? (
                     <div className="flex items-center gap-2">

@@ -117,7 +117,7 @@ export const MemberLoginModal: React.FC<MemberLoginModalProps> = ({
 
             <button
               type="submit"
-              className="w-full py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md shadow-orange-500/20 transition-all cursor-pointer"
+              className="w-full py-3 px-4 rounded-xl bg-[#1e2f47] hover:bg-[#152336] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md shadow-[#1e2f47]/20 transition-all cursor-pointer"
             >
               <span>Me connecter à mon Espace</span>
               <ArrowRight className="w-4 h-4" />

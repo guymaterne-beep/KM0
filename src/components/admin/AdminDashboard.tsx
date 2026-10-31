@@ -380,7 +380,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
       <header className="sticky top-0 z-30 bg-white border-b border-stone-200 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-500 text-white flex items-center justify-center font-display text-xl font-black shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#1e2f47] text-white flex items-center justify-center font-display text-xl font-black shadow-xs">
               KM0
             </div>
             <div>
@@ -440,16 +440,16 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`py-3 px-4 text-xs font-bold tracking-wide uppercase flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                   isActive
-                    ? 'border-orange-500 text-stone-950 font-extrabold bg-orange-50/50'
+                    ? 'border-[#1e2f47] text-stone-950 font-extrabold bg-blue-50/50'
                     : 'border-transparent text-stone-500 hover:text-stone-900 hover:border-stone-300'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-orange-600' : 'text-stone-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-[#1e2f47]' : 'text-stone-400'}`} />
                 <span>{tab.label}</span>
                 {tab.count !== undefined && (
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                      isActive ? 'bg-orange-200 text-orange-950 font-bold' : 'bg-stone-200 text-stone-600'
+                      isActive ? 'bg-blue-100 text-blue-950 font-bold' : 'bg-stone-200 text-stone-600'
                     }`}
                   >
                     {tab.count}
@@ -516,7 +516,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
 
                 <button
                   onClick={handleOpenNewMember}
-                  className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Ajouter un Membre</span>
@@ -667,7 +667,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
 
               <button
                 onClick={handleOpenNewTier}
-                className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
               >
                 <Plus className="w-4 h-4" />
                 <span>Nouvelle Formule d’Adhésion</span>
@@ -800,7 +800,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
 
                 <button
                   onClick={() => setIsEmailModalOpen(true)}
-                  className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <Send className="w-4 h-4" />
                   <span>Rédiger un Email / Broadcast</span>
@@ -1107,7 +1107,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+                    className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all cursor-pointer"
                   >
                     Enregistrer les clés &amp; paramètres de paiement
                   </button>
@@ -1267,7 +1267,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
 
               <button
                 onClick={handleOpenNewRide}
-                className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Ajouter une Sortie / Activité</span>
@@ -1349,21 +1349,21 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           <button
                             onClick={() => setSelectedRideForAttendees(ride)}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-orange-50 hover:bg-orange-100 text-stone-900 border border-orange-300 transition-all cursor-pointer shadow-xs group"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-blue-50 hover:bg-blue-100 text-stone-900 border border-blue-200 transition-all cursor-pointer shadow-xs group"
                             title="Consulter et gérer la liste privée des participants inscrits"
                           >
-                            <Users className="w-3.5 h-3.5 text-orange-600 group-hover:scale-110 transition-transform" />
+                            <Users className="w-3.5 h-3.5 text-[#1e2f47] group-hover:scale-110 transition-transform" />
                             <span>
                               {ride.registeredCount} inscrit(s)
                             </span>
-                            <Eye className="w-3.5 h-3.5 text-orange-600 opacity-70 group-hover:opacity-100" />
+                            <Eye className="w-3.5 h-3.5 text-[#1e2f47] opacity-70 group-hover:opacity-100" />
                           </button>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap text-right">
                           <div className="flex items-center justify-end gap-1">
                             <button
                               onClick={() => setSelectedRideForAttendees(ride)}
-                              className="p-1.5 text-orange-600 hover:text-orange-700 hover:bg-orange-100/70 rounded-lg transition-colors cursor-pointer"
+                              className="p-1.5 text-[#1e2f47] hover:text-[#152336] hover:bg-blue-100/70 rounded-lg transition-colors cursor-pointer"
                               title="Voir la liste privée des inscrits"
                             >
                               <Users className="w-4 h-4" />
@@ -1374,7 +1374,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
                                 className="p-1.5 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors cursor-pointer"
                                 title="Télécharger le fichier GPX"
                               >
-                                <FileDown className="w-4 h-4 text-orange-600" />
+                                <FileDown className="w-4 h-4 text-[#1e2f47]" />
                               </button>
                             )}
                             <button
@@ -1413,7 +1413,7 @@ export default function AdminDashboard({ onBackToSite }: AdminDashboardProps) {
               </h3>
               <button
                 onClick={handleOpenNewTrip}
-                className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 font-bold rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>Ajouter un Voyage / Stage</span>

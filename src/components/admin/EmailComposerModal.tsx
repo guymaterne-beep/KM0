@@ -230,7 +230,7 @@ export default function EmailComposerModal({ isOpen, onClose }: EmailComposerMod
                   </button>
                   <button
                     type="submit"
-                    className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer font-bold"
+                    className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer font-bold"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Envoyer aux {recipients.length} destinataires</span>

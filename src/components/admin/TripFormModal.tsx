@@ -421,7 +421,7 @@ export default function TripFormModal({ isOpen, tripToEdit, onClose, onSave }: T
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer font-bold"
+              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{tripToEdit ? 'Enregistrer les modifications' : 'Créer le voyage'}</span>

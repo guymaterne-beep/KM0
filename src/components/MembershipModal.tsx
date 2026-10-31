@@ -156,7 +156,7 @@ export default function MembershipModal({
                         onClose();
                         onOpenPortal();
                       }}
-                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-xs cursor-pointer"
+                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs cursor-pointer"
                     >
                       Ouvrir mon Espace Membre
                     </button>
@@ -351,7 +351,7 @@ export default function MembershipModal({
                   </div>
                   <button
                     type="submit"
-                    className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-xs cursor-pointer"
+                    className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs cursor-pointer"
                   >
                     Procéder au paiement ({tier.pricePerYear} €) →
                   </button>

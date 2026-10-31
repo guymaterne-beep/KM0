@@ -241,7 +241,7 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
             onClick={() => setActiveTab('rides')}
             className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'rides'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-[#1e2f47] text-[#1e2f47]'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
@@ -256,7 +256,7 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
             onClick={() => setActiveTab('trips')}
             className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'trips'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-[#1e2f47] text-[#1e2f47]'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
@@ -268,14 +268,14 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
             onClick={() => setActiveTab('receipts')}
             className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'receipts'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-[#1e2f47] text-[#1e2f47]'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
             <CreditCard className="w-4 h-4" />
             <span>Cotisations & Reçus de Paiement</span>
             {memberTxs.length > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-800 font-bold">
+              <span className="px-2 py-0.5 rounded-full text-xs bg-blue-100 text-blue-900 font-bold">
                 {memberTxs.length}
               </span>
             )}
@@ -285,7 +285,7 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
             onClick={() => setActiveTab('profile')}
             className={`flex items-center gap-2 py-3 px-4 border-b-2 font-bold text-sm whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'profile'
-                ? 'border-orange-500 text-orange-600'
+                ? 'border-[#1e2f47] text-[#1e2f47]'
                 : 'border-transparent text-stone-500 hover:text-stone-800'
             }`}
           >
@@ -449,7 +449,7 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
 
                         <button
                           onClick={onClose}
-                          className="px-3.5 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-colors cursor-pointer"
+                          className="px-3.5 py-1.5 rounded-lg bg-[#1e2f47] hover:bg-[#152336] text-white font-bold text-xs transition-colors cursor-pointer"
                         >
                           Fiche séjour
                         </button>
@@ -643,7 +643,7 @@ export const MemberPortal: React.FC<MemberPortalProps> = ({ onClose }) => {
 
               <button
                 type="submit"
-                className="py-3 px-6 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+                className="py-3 px-6 rounded-xl bg-[#1e2f47] hover:bg-[#152336] text-white font-bold text-sm shadow-md transition-all cursor-pointer"
               >
                 Enregistrer les modifications
               </button>

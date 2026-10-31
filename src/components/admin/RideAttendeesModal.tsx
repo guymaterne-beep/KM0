@@ -261,11 +261,11 @@ export default function RideAttendeesModal({
             <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Total Inscrits</span>
             <div className="flex items-baseline gap-1 mt-0.5">
               <span className="font-display text-2xl font-black text-stone-900">{rideRegistrations.length}</span>
-              <span className="text-xs text-orange-600 font-bold">(ouvert sans limite)</span>
+              <span className="text-xs text-[#1e2f47] font-bold">(ouvert sans limite)</span>
             </div>
             <div className="w-full bg-stone-100 h-1.5 rounded-full mt-2 overflow-hidden">
               <div
-                className="bg-orange-500 h-full rounded-full"
+                className="bg-[#1e2f47] h-full rounded-full"
                 style={{
                   width: `${Math.min(100, Math.max(15, rideRegistrations.length * 8))}%`,
                 }}
@@ -278,7 +278,7 @@ export default function RideAttendeesModal({
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="font-display text-2xl font-black text-emerald-700">{confirmedCount}</span>
               {pendingCount > 0 && (
-                <span className="text-[11px] font-bold text-orange-600">({pendingCount} en attente)</span>
+                <span className="text-[11px] font-bold text-blue-700">({pendingCount} en attente)</span>
               )}
             </div>
             <span className="text-[11px] text-emerald-600 font-medium mt-1 block">
@@ -336,7 +336,7 @@ export default function RideAttendeesModal({
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setShowAddForm(!showAddForm)}
-              className="px-3 py-1.5 text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 text-xs font-bold bg-[#1e2f47] hover:bg-[#152336] text-white rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Inscrire un coureur</span>
@@ -347,7 +347,7 @@ export default function RideAttendeesModal({
               className="px-3 py-1.5 text-xs font-semibold bg-white hover:bg-stone-50 text-stone-700 border border-stone-300 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
               title="Envoyer un email groupé à tous les inscrits"
             >
-              <Mail className="w-3.5 h-3.5 text-orange-600" />
+              <Mail className="w-3.5 h-3.5 text-[#1e2f47]" />
               <span>Email au peloton</span>
             </button>
 
@@ -466,7 +466,7 @@ export default function RideAttendeesModal({
               </button>
               <button
                 type="submit"
-                className="px-4 py-1.5 text-xs font-bold bg-orange-500 hover:bg-orange-600 text-white rounded-lg shadow-xs cursor-pointer"
+                className="px-4 py-1.5 text-xs font-bold bg-[#1e2f47] hover:bg-[#152336] text-white rounded-lg shadow-xs cursor-pointer"
               >
                 Valider l'inscription
               </button>

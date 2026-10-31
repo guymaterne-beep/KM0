@@ -348,7 +348,7 @@ export default function MemberFormModal({ isOpen, memberToEdit, onClose, onSave 
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 font-bold rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{memberToEdit ? 'Enregistrer les modifications' : 'Créer le membre'}</span>

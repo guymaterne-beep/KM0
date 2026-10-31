@@ -45,7 +45,7 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
                 onClick={() => setFilterDiscipline(tab.id as any)}
                 className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
                   filterDiscipline === tab.id
-                    ? 'bg-orange-500 text-white shadow-xs'
+                    ? 'bg-[#1e2f47] text-white shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -61,7 +61,7 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
             <div
               key={trip.id}
               onClick={() => onSelectTrip(trip)}
-              className="group p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 hover:border-orange-500 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between"
+              className="group p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 hover:border-[#1e2f47] shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-4">
@@ -77,7 +77,7 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
                         className="font-mono text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1"
                         title={`${trip.photos.length} photos du séjour`}
                       >
-                        <Camera className="w-3 h-3 text-orange-600" />
+                        <Camera className="w-3 h-3 text-[#1e2f47]" />
                         <span>{trip.photos.length}</span>
                       </span>
                     )}
@@ -94,11 +94,11 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
                   </span>
                 </div>
 
-                <h3 className="font-display text-2xl sm:text-3xl font-extrabold uppercase text-slate-950 mb-2 group-hover:text-orange-600 transition-colors">
+                <h3 className="font-display text-2xl sm:text-3xl font-extrabold uppercase text-slate-950 mb-2 group-hover:text-[#1e2f47] transition-colors">
                   {trip.title}
                 </h3>
 
-                <p className="text-xs text-orange-600 font-bold mb-3">
+                <p className="text-xs text-[#1e2f47] font-bold mb-3">
                   {trip.subtitle}
                 </p>
 
@@ -110,7 +110,7 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
                 <div className="space-y-2 mb-6">
                   {(trip.highlights || []).slice(0, 3).map((h, i) => (
                     <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-1.5" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#1e2f47] shrink-0 mt-1.5" />
                       <span>{h}</span>
                     </div>
                   ))}
@@ -130,13 +130,13 @@ export default function TripsSection({ onSelectTrip }: TripsSectionProps) {
 
                 <div className="text-right">
                   <span className="text-xs text-slate-500 block">À partir de</span>
-                  <span className="font-display text-2xl sm:text-3xl font-black text-orange-600">
+                  <span className="font-display text-2xl sm:text-3xl font-black text-[#1e2f47]">
                     {trip.priceEuro} €
                   </span>
                 </div>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-orange-600 group-hover:text-orange-700 font-bold">
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-[#1e2f47] group-hover:text-blue-700 font-bold">
                 <span>Voir le programme complet &amp; réserver</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>

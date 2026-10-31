@@ -234,7 +234,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
               <button
                 type="button"
                 onClick={handleDownloadGpx}
-                className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0"
+                className="px-4 py-2 bg-[#1e2f47] hover:bg-[#152336] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0"
               >
                 <FileDown className="w-3.5 h-3.5" />
                 <span>Télécharger la trace GPX</span>
@@ -306,7 +306,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                           onClose();
                           onOpenPortal();
                         }}
-                        className="px-5 py-2 text-xs font-bold text-white bg-orange-500 hover:bg-orange-600 rounded-xl cursor-pointer"
+                        className="px-5 py-2 text-xs font-bold text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl cursor-pointer"
                       >
                         Voir dans mon Espace Membre
                       </button>
@@ -325,7 +325,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                     <h3 className="font-display text-xl font-bold uppercase text-slate-950">
                       Réservation de votre place pour ce séjour
                     </h3>
-                    <span className="text-xs text-orange-600 font-bold bg-orange-50 px-2.5 py-1 rounded-full border border-orange-200">
+                    <span className="text-xs text-[#1e2f47] font-bold bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
                       Acompte de confirmation : {depositAmount} €
                     </span>
                   </div>
@@ -341,7 +341,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Prénom Nom"
-                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                       />
                     </div>
                     <div>
@@ -354,7 +354,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="cycliste@domaine.be"
-                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                       />
                     </div>
                     <div>
@@ -367,7 +367,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="+32 ..."
-                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                       />
                     </div>
                   </div>
@@ -375,7 +375,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                   {!currentMember && (
                     <div className="bg-stone-50 p-3 rounded-xl border border-stone-200">
                       <div className="flex items-center gap-1.5 mb-1">
-                        <Lock className="w-3.5 h-3.5 text-amber-600" />
+                        <Lock className="w-3.5 h-3.5 text-[#1e2f47]" />
                         <span className="text-xs font-bold text-stone-800">
                           Mot de passe Espace Membre (optionnel pour suivre votre voyage)
                         </span>
@@ -385,7 +385,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         placeholder="Créer un mot de passe..."
-                        className="w-full px-3 py-2 text-sm bg-white border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:border-amber-500"
+                        className="w-full px-3 py-2 text-sm bg-white border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:border-[#1e2f47]"
                       />
                     </div>
                   )}
@@ -398,7 +398,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                       <select
                         value={formData.participantsCount}
                         onChange={(e) => setFormData({ ...formData, participantsCount: e.target.value })}
-                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500 font-medium"
+                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-[#1e2f47] font-medium"
                       >
                         <option value="1">1 cycliste</option>
                         <option value="2">2 cyclistes</option>
@@ -414,7 +414,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                         value={formData.notes}
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                         placeholder="Régime alimentaire, prêt de vélo..."
-                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-amber-500"
+                        className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-[#1e2f47]"
                       />
                     </div>
                   </div>
@@ -430,7 +430,7 @@ export default function TripDetailModal({ trip, onClose, onOpenPortal }: TripDet
                     <button
                       type="button"
                       onClick={handlePayDepositClick}
-                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-xs hover:shadow-md flex items-center gap-1.5 cursor-pointer"
+                      className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-xs hover:shadow-md flex items-center gap-1.5 cursor-pointer"
                     >
                       <CreditCard className="w-3.5 h-3.5" />
                       <span>Régler l'acompte en ligne ({depositAmount} €)</span>

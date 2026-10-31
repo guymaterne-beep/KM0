@@ -17,7 +17,7 @@ export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-100 border border-orange-300 rounded-full text-orange-950 text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[#1e2f47] text-xs font-bold uppercase tracking-wider mb-4">
             <span>Adhésion Saison 2026 / 2027</span>
           </div>
           <h2 className="font-display text-3xl sm:text-5xl font-extrabold uppercase text-slate-950 tracking-tight mb-4">
@@ -36,12 +36,12 @@ export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
               key={tier.id}
               className={`p-8 rounded-2xl flex flex-col justify-between transition-all duration-300 relative ${
                 tier.recommended
-                  ? 'bg-white border-2 border-orange-500 shadow-md ring-2 ring-orange-400/20'
+                  ? 'bg-white border-2 border-[#1e2f47] shadow-md ring-2 ring-[#1e2f47]/20'
                   : 'bg-white border border-slate-200 hover:border-slate-300 shadow-xs'
               }`}
             >
               {tier.recommended && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[10px] font-black uppercase tracking-widest px-3.5 py-1 rounded-full shadow-xs">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#1e2f47] text-white text-[10px] font-black uppercase tracking-widest px-3.5 py-1 rounded-full shadow-xs">
                   {tier.badge || 'Recommandée'}
                 </div>
               )}
@@ -58,7 +58,7 @@ export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
                 </h3>
 
                 <div className="flex items-baseline gap-2 mb-4">
-                  <span className="font-display text-4xl sm:text-5xl font-black text-orange-600">
+                  <span className="font-display text-4xl sm:text-5xl font-black text-[#1e2f47]">
                     {tier.pricePerYear} €
                   </span>
                   <span className="text-xs text-slate-500 font-mono font-medium">
@@ -74,7 +74,7 @@ export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
                 <ul className="space-y-3 mb-8 text-xs text-slate-700">
                   {tier.features.map((feat, i) => (
                     <li key={i} className="flex items-start gap-2.5">
-                      <Check className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                      <Check className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                       <span>{feat}</span>
                     </li>
                   ))}
@@ -86,8 +86,8 @@ export default function ClubMembership({ onSelectTier }: ClubMembershipProps) {
                   onClick={() => onSelectTier(tier)}
                   className={`w-full py-3.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-xs ${
                     tier.recommended
-                      ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-xs font-black'
-                      : 'bg-[#1e2f47] hover:bg-[#162335] text-white font-bold'
+                      ? 'bg-[#1e2f47] hover:bg-[#152336] text-white shadow-xs font-black'
+                      : 'bg-[#1e2f47] hover:bg-[#152336] text-white font-bold'
                   }`}
                 >
                   {tier.ctaText || 'Rejoindre le Club'}

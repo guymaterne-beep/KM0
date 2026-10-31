@@ -52,21 +52,21 @@ export default function SeasonPhilosophy() {
 
               <div className="space-y-2.5 text-xs text-stone-700">
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Pilotage fin : franchissement de racines, ornières &amp; devers gras</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Sorties protégées du vent dans les vallées de l’Amblève, l’Ourthe et Meerdaal</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Ravitos d’hiver : marmite de soupe aux légumes chauds et feu réconfortant</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 pt-4 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-amber-700">
+            <div className="mt-8 pt-4 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-[#1e2f47]">
               <span>Voir le programme VTT</span>
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -77,16 +77,16 @@ export default function SeasonPhilosophy() {
             onClick={() => setActiveTab('printemps-automne')}
             className={`p-6 sm:p-8 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
               activeTab === 'printemps-automne'
-                ? 'bg-white border-amber-400 shadow-lg ring-2 ring-amber-400/20'
+                ? 'bg-white border-[#1e2f47] shadow-lg ring-2 ring-[#1e2f47]/20'
                 : 'bg-white/80 border-stone-200 hover:border-stone-300 hover:bg-white shadow-xs'
             }`}
           >
             <div>
               <div className="flex items-center justify-between mb-6">
-                <span className="px-2.5 py-1 rounded-md text-[11px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                <span className="px-2.5 py-1 rounded-md text-[11px] font-extrabold uppercase tracking-wider bg-sky-100 text-sky-900 border border-sky-200">
                   Mars — Mai &amp; Sept — Oct
                 </span>
-                <Leaf className="w-6 h-6 text-orange-600" />
+                <Leaf className="w-6 h-6 text-[#1e2f47]" />
               </div>
 
               <h3 className="font-display text-2xl sm:text-3xl font-extrabold uppercase text-stone-950 mb-3">
@@ -99,15 +99,15 @@ export default function SeasonPhilosophy() {
 
               <div className="space-y-2.5 text-xs text-stone-700">
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Traversée des chemins creux du Brabant, drailles de Herve et Condroz</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Format expédition &amp; bikepacking 2 à 3 jours avec bivouac ou auberge</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Rythme polyvalent : rouler dynamique sans la monotonie du bitume</span>
                 </div>
               </div>
@@ -146,21 +146,21 @@ export default function SeasonPhilosophy() {
 
               <div className="space-y-2.5 text-xs text-stone-700">
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Pelotons ordonnés en double file, relais souples et apprentissage des bordures</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Les monuments : Redoute, Roche-aux-Faucons, Koppenberg, Mur de Huy</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-4 h-4 text-[#1e2f47] shrink-0 mt-0.5" />
                   <span>Sorties longues 100 à 150 km avec assistance et arrêts brasserie</span>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 pt-4 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-amber-700">
+            <div className="mt-8 pt-4 border-t border-stone-100 flex items-center justify-between text-xs font-bold text-[#1e2f47]">
               <span>Voir le programme Route</span>
               <ChevronRight className="w-4 h-4" />
             </div>
@@ -171,7 +171,7 @@ export default function SeasonPhilosophy() {
         <div className="p-8 rounded-2xl bg-white border border-stone-200 shadow-sm relative overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center relative z-10">
             <div className="md:col-span-2">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-orange-600 mb-2">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#1e2f47] mb-2">
                 <span>Partenariat Officiel</span>
                 <span>·</span>
                 <span>Projet KM0 Suisse &amp; Belgique</span>
@@ -187,7 +187,7 @@ export default function SeasonPhilosophy() {
             <div className="flex flex-col sm:flex-row md:flex-col gap-3 justify-center">
               <a
                 href="#calendrier"
-                className="px-5 py-3 text-center text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl transition-all shadow-xs cursor-pointer"
+                className="px-5 py-3 text-center text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl transition-all shadow-xs cursor-pointer"
               >
                 Rejoindre la Prochaine Sortie
               </a>

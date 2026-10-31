@@ -390,7 +390,7 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
                 type="number"
                 value={formData.maxParticipants}
                 onChange={(e) => setFormData({ ...formData, maxParticipants: Number(e.target.value) })}
-                className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-orange-500"
+                className="w-full px-3 py-2 text-sm bg-stone-50 border border-stone-300 rounded-xl text-stone-900 focus:bg-white focus:outline-none focus:border-blue-600"
               />
               <span className="text-[10px] text-stone-500 mt-1 block">Sortie ouverte à tous sans limite stricte</span>
             </div>
@@ -537,7 +537,7 @@ export default function RideFormModal({ isOpen, rideToEdit, onClose, onSave }: R
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-orange-500 hover:bg-orange-600 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-[#1e2f47] hover:bg-[#152336] rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{rideToEdit ? 'Enregistrer les modifications' : 'Créer l’activité'}</span>

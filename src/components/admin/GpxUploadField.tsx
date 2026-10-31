@@ -247,9 +247,9 @@ export default function GpxUploadField({
       {hasFile ? (
         <div className="space-y-3">
           {/* File Card */}
-          <div className="p-4 bg-orange-50/40 rounded-xl border border-orange-300/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+          <div className="p-4 bg-blue-50/50 rounded-xl border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-orange-400/20 text-orange-800 flex items-center justify-center shrink-0 border border-orange-300">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 text-[#1e2f47] flex items-center justify-center shrink-0 border border-blue-300">
                 <span className="font-mono text-xs font-black">GPX</span>
               </div>
               <div className="min-w-0">
@@ -275,7 +275,7 @@ export default function GpxUploadField({
                 className="px-3 py-1.5 text-xs font-bold bg-white text-stone-800 hover:bg-stone-50 border border-stone-300 rounded-lg shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="Tester le téléchargement du fichier"
               >
-                <FileDown className="w-3.5 h-3.5 text-orange-600" />
+                <FileDown className="w-3.5 h-3.5 text-[#1e2f47]" />
                 <span>Tester téléchargement</span>
               </button>
               <button
@@ -302,7 +302,7 @@ export default function GpxUploadField({
             <div className="p-4 bg-white rounded-xl border border-stone-200 shadow-xs space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-orange-100 text-orange-800">
+                  <div className="p-1.5 rounded-lg bg-blue-100 text-[#1e2f47]">
                     <TrendingUp className="w-4 h-4" />
                   </div>
                   <div>
@@ -322,7 +322,7 @@ export default function GpxUploadField({
                     className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all flex items-center gap-1.5 cursor-pointer ${
                       hasAppliedProfile
                         ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
-                        : 'bg-orange-500 hover:bg-orange-600 text-white border-orange-600 shadow-xs'
+                        : 'bg-[#1e2f47] hover:bg-[#152336] text-white border-[#1e2f47] shadow-xs'
                     }`}
                   >
                     {hasAppliedProfile ? (
@@ -403,13 +403,13 @@ export default function GpxUploadField({
           onClick={() => fileInputRef.current?.click()}
           className={`p-6 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all ${
             isDragging
-              ? 'border-orange-500 bg-orange-50/60'
-              : 'border-stone-300 bg-stone-50/60 hover:bg-stone-100 hover:border-orange-400'
+              ? 'border-[#1e2f47] bg-blue-50/60'
+              : 'border-stone-300 bg-stone-50/60 hover:bg-stone-100 hover:border-blue-400'
           }`}
         >
-          <UploadCloud className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+          <UploadCloud className="w-8 h-8 text-[#1e2f47] mx-auto mb-2" />
           <p className="text-xs font-bold text-stone-900 mb-1">
-            Glissez-déposez votre fichier GPX ici, ou <span className="text-orange-700 underline">parcourez vos dossiers</span>
+            Glissez-déposez votre fichier GPX ici, ou <span className="text-[#1e2f47] underline">parcourez vos dossiers</span>
           </p>
           <p className="text-[11px] text-stone-500 max-w-sm mx-auto mb-3">
             Fichier .gpx officiel. L'altimétrie et le profil de dénivelé seront calculés automatiquement.
@@ -421,7 +421,7 @@ export default function GpxUploadField({
               onClick={handleGenerateDefault}
               className="px-3.5 py-1.5 text-xs font-semibold bg-white hover:bg-stone-50 text-stone-700 border border-stone-300 rounded-lg shadow-xs flex items-center gap-1.5 mx-auto transition-colors cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-orange-600" />
+              <Sparkles className="w-3.5 h-3.5 text-[#1e2f47]" />
               <span>Générer automatiquement une trace &amp; profil modèle KM0 pour cette sortie</span>
             </button>
           </div>

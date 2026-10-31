@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { IMAGES } from '../assets/images';
 import {
   ArrowRight,
@@ -29,6 +29,27 @@ export default function Hero({ onExploreCalendar, onJoinClub, onOpenQuiz }: Hero
   const [isMuted, setIsMuted] = useState(true);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  const dynamicPhrases = [
+    'en VTT dans les sous-bois ardennais',
+    'en Gravel sur les chemins secrets du Brabant',
+    'en peloton soudé sur les monts & pavés flandriens',
+    'en voyages & aventures bikepacking',
+  ];
+
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [isFading, setIsFading] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsFading(true);
+      setTimeout(() => {
+        setPhraseIndex((prev) => (prev + 1) % dynamicPhrases.length);
+        setIsFading(false);
+      }, 250);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, [dynamicPhrases.length]);
 
   const seasonConfig = {
     vtt: {
@@ -100,7 +121,38 @@ export default function Hero({ onExploreCalendar, onJoinClub, onOpenQuiz }: Hero
       </div>
 
       {/* Main Content Area */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-12 w-full flex-1 flex flex-col justify-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 w-full flex-1 flex flex-col justify-center">
+        {/* Dynamic Catchphrase Hook at Top of Page: Visitors immediately understand what KM0 does */}
+        <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-[#1e2f47] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Compass className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#1e2f47]">
+                  Qui sommes-nous ?
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#1e2f47] border border-blue-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                  Club Cycliste 4 Saisons · Belgique
+                </span>
+              </div>
+              <p className="text-base sm:text-lg md:text-xl font-bold text-slate-900 leading-snug">
+                <span>Nous organisons des sorties encadrées et des voyages pour rouler ensemble </span>
+                <span
+                  className={`inline-block font-black text-[#1e2f47] bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-200 shadow-xs transition-all duration-300 ${
+                    isFading ? 'opacity-0 -translate-y-1 scale-95' : 'opacity-100 translate-y-0 scale-100'
+                  }`}
+                >
+                  {dynamicPhrases[phraseIndex]}
+                </span>
+                <span>, en toute convivialité et sans esprit de compétition.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Season Selector Tabs */}
         <div className="inline-flex flex-wrap items-center gap-1.5 p-1.5 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-xs max-w-fit mb-6">
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-2 hidden sm:inline">
